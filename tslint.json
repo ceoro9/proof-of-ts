@@ -1,0 +1,32 @@
+{
+    "extends": "tslint:recommended",
+    "defaultSeverity": "error",
+    "rules": {
+        "max-line-length":            [true, 120],
+        "max-file-line-count":        [true, 400],
+        "max-classes-per-file":       [true, 1],
+        "no-consecutive-blank-lines": [true, 2],
+		"indent":                     [true, "tabs", 2],
+		"interface-name":             [true, "never-prefix"],
+		"quotemark":                  [true, "single"],
+        "semicolon":                  [true, "always"],
+        "arrow-parens":               [true, "ban-single-arg-parens"],
+		"variable-name":              [true, "ban-keywords", "allow-leading-underscore"],
+        "curly":                      [true, "ignore-same-line"],
+        "class-name":                 true,
+        "new-parens":                 true,
+        "no-redundant-jsdoc":         true,
+        "encoding":                   true,
+        "newline-before-return":      true,
+        "no-require-imports":         true,
+		"no-empty-interface":         false,
+		"jsdoc-format":               false,
+		"member-ordering":            false,
+		"object-literal-sort-keys":   false,
+		"import-spacing":             false,
+		"typedef-whitespace":         false,
+        "ordered-imports":            false,
+        "no-empty":                   false,
+        "no-console":                 false
+    }
+}

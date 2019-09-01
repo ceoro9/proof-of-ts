@@ -5,25 +5,25 @@ import cors from 'cors';
 import { useExpressServer } from 'routing-controllers';
 
 export default class ExpressConfig {
-  
-  public app: express.Express;
 
-  public constructor() {
-    this.app = express();
-    
-    // middleware
-    this.app.use(cors());
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: true }));
+	public app: express.Express;
 
-    this.setUpControllers();
-  }
+	public constructor() {
+		this.app = express();
 
-  private setUpControllers() {
-    const controllersPath = path.resolve('dist', 'controllers');
-    useExpressServer(this.app, {
-      controllers: [controllersPath + '/*.js']
-    });
-  }
+		// middleware
+		this.app.use(cors());
+		this.app.use(bodyParser.json());
+		this.app.use(bodyParser.urlencoded({ extended: true }));
 
-} 
+		this.setUpControllers();
+	}
+
+	private setUpControllers() {
+		const controllersPath = path.resolve('dist', 'controllers');
+		useExpressServer(this.app, {
+			controllers: [controllersPath + '/*.js'],
+		});
+	}
+
+}

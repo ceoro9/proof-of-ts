@@ -7,7 +7,9 @@
     "clean": "node ./node_modules/rimraf/bin.js dist",
     "build": "node ./node_modules/typescript/bin/tsc",
     "start-server": "node ./dist/index.js",
-    "start": "npm run clean && npm run build && npm run start-server"
+    "start": "npm run clean && npm run build && npm run start-server",
+    "lint": "node ./node_modules/tslint/bin/tslint src/**/*.ts",
+    "lint:fix": "npm run lint -- --fix"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +21,7 @@
     "@types/node": "^12.7.3",
     "debug": "^4.1.1",
     "rimraf": "^3.0.0",
+    "tslint": "^5.19.0",
     "typescript": "^3.6.2"
   },
   "dependencies": {
