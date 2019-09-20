@@ -14,3 +14,4 @@ export enum Privilige {
   AVERAGE = 'Average',
   HIGH    = 'High'
 }
+

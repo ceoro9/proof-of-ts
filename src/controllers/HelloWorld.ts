@@ -7,7 +7,7 @@ export class HelloWorld {
 
 	@Get('/')
 	public async get(@Req() _request: Request, @Res() _response: Response) {
-		return { message: 'Hello, World!' };
+		return { message: `Hello, World! ${process.env.DATABASE_URL}` };
 	}
 
 }

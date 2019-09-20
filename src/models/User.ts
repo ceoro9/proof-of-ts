@@ -1,4 +1,5 @@
-import { prop, Typegoose, ModelType, InstanceType, staticMethod, pre, post } from 'typegoose';
+import * as mongoose from 'mongoose';
+import { prop, Typegoose, ModelType, staticMethod, pre, post } from 'typegoose';
 import validator from 'validator';
 import { Gender, Privilige } from '@app/constants';
 
@@ -10,12 +11,13 @@ import { Gender, Privilige } from '@app/constants';
 })
 @post<User>('save', (user) => {
   try {
-    await 
+    console.log('user has saved ...');
+    // TODO: add queue event
   } catch (e) {
     // TODO: log error
   }
 })
-export class User extends Typegoose {
+class User extends Typegoose {
 
   @prop({ required: true, trim: true })
   firstName!: string;
@@ -61,4 +63,11 @@ export class User extends Typegoose {
   }
 
 }
+
+export const UserModel = new User().getModelForClass(User, {
+  existingMongoose: mongoose,
+  schemaOptions: {
+    collection: 'users',
+  }
+});
 
