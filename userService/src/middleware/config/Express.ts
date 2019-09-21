@@ -20,7 +20,7 @@ export default class ExpressConfig {
 	}
 
 	private setUpControllers() {
-		const controllersPath = path.resolve('dist', 'controllers');
+		const controllersPath = path.resolve('dist', 'service-layer', 'controllers');
 		useExpressServer(this.app, {
 			controllers: [controllersPath + '/*.js'],
 		});

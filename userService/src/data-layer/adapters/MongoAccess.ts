@@ -23,7 +23,7 @@ export default class MongoAccess {
 
 		this.mongooseConnection = mongoose.connection;
 
-		this.mongooseInstance.on('open', () => {
+		this.mongooseConnection.on('open', () => {
 
 		});
 
