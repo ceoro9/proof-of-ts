@@ -1,3 +1,3 @@
 import 'reflect-metadata';
-import Application from './config/Application';
+import Application from './middleware/config/Application';
 export default new Application();
