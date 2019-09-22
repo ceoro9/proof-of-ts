@@ -11,7 +11,7 @@
     "lint": "node ./node_modules/tslint/bin/tslint src/**/*.ts",
     "lint:fix": "npm run lint -- --fix"
   },
-  "author": "", 
+  "author": "",
   "license": "ISC",
   "_moduleAliases": {
     "@app": "./dist"
@@ -39,6 +39,7 @@
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.7.7",
     "typegoose": "^5.9.0",
-    "validator": "^11.1.0"
+    "validator": "^11.1.0",
+    "winston": "^3.2.1"
   }
 }

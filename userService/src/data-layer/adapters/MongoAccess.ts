@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { getEnvVar } from '@app/middleware/config/Utils';
+import { logger } from '@app/middleware/common/Logging';
 
 interface MongoConnectionConfig {
 	dbURL?:  string;
@@ -7,6 +8,8 @@ interface MongoConnectionConfig {
 }
 
 export default class MongoAccess {
+
+	public static RECONNECT_INTERVAL = 10000; // in ms
 
 	private static mongooseInstance:   any;
 	private static mongooseConnection: mongoose.Connection;
@@ -17,44 +20,51 @@ export default class MongoAccess {
 
 	private static connect(config: MongoConnectionConfig): mongoose.Connection {
 
-		if (this.mongooseInstance) {
-			return this.mongooseInstance;
-		}
+    if (this.mongooseInstance) {
+      return this.mongooseInstance;
+    }
 
-		this.mongooseConnection = mongoose.connection;
+    const {
+      dbURL  = getEnvVar('DATABASE_URL'),
+      dbName = getEnvVar('DATABASE_NAME'),
+    } = config;
 
-		this.mongooseConnection.on('open', () => {
+    const setUpMongooseInstance = () => mongoose.connect(dbURL + dbName, { useNewUrlParser: true });
 
-		});
+    this.mongooseConnection = mongoose.connection;
 
-		this.mongooseConnection.on('connected', () => {
+    this.mongooseConnection.on('open', () => {
+      logger.info('Connection to MongoDB is opened.');
+    });
 
-		});
+    this.mongooseConnection.on('connected', () => {
+      logger.info('Mongoose default connection is connected.');
+    });
 
-		this.mongooseConnection.on('error', () => {
+    this.mongooseConnection.on('error', msg => {
+      logger.error(`Mongoose default connection error: ${msg}`);
+    });
 
-		});
+    this.mongooseConnection.on('disconnected', () => {
+      logger.info('Mongoose default connection is disconnected.');
+      setTimeout(() => {
+        this.mongooseInstance = setUpMongooseInstance();
+      }, this.RECONNECT_INTERVAL);
+    });
 
-		this.mongooseConnection.on('disconnected', () => {
+    this.mongooseConnection.on('reconnected', () => {
+      logger.info('Mongoose default connection is reconnected.');
+    });
 
-		});
+    process.on('SIGINT', async () => {
+      await this.mongooseConnection.close();
+      logger.info('Mongoose default connection is disconnected through app termiation.');
+      process.exit(0);
+    });
 
-		this.mongooseConnection.on('reconnected', () => {
+    this.mongooseInstance = setUpMongooseInstance();
 
-		});
-
-		process.on('SIGINT', () => {
-
-		});
-
-		const {
-			dbURL  = getEnvVar('DATABASE_URL'),
-			dbName = getEnvVar('DATABASE_NAME'),
-		} = config;
-
-		this.mongooseInstance = mongoose.connect(dbURL + dbName, { useNewUrlParser: true });
-
-		return this.mongooseInstance;
+    return this.mongooseInstance;
 	}
 
 }
