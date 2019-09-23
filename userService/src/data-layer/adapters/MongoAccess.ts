@@ -20,51 +20,51 @@ export default class MongoAccess {
 
 	private static connect(config: MongoConnectionConfig): mongoose.Connection {
 
-    if (this.mongooseInstance) {
-      return this.mongooseInstance;
-    }
+		if (this.mongooseInstance) {
+			return this.mongooseInstance;
+		}
 
-    const {
-      dbURL  = getEnvVar('DATABASE_URL'),
-      dbName = getEnvVar('DATABASE_NAME'),
-    } = config;
+		const {
+			dbURL  = getEnvVar('DATABASE_URL'),
+			dbName = getEnvVar('DATABASE_NAME'),
+		} = config;
 
-    const setUpMongooseInstance = () => mongoose.connect(dbURL + dbName, { useNewUrlParser: true });
+		const setUpMongooseInstance = () => mongoose.connect(dbURL + dbName, { useNewUrlParser: true });
 
-    this.mongooseConnection = mongoose.connection;
+		this.mongooseConnection = mongoose.connection;
 
-    this.mongooseConnection.on('open', () => {
-      logger.info('Connection to MongoDB is opened.');
-    });
+		this.mongooseConnection.on('open', () => {
+			logger.info('Connection to MongoDB is opened.');
+		});
 
-    this.mongooseConnection.on('connected', () => {
-      logger.info('Mongoose default connection is connected.');
-    });
+		this.mongooseConnection.on('connected', () => {
+			logger.info('Mongoose default connection is connected.');
+		});
 
-    this.mongooseConnection.on('error', msg => {
-      logger.error(`Mongoose default connection error: ${msg}`);
-    });
+		this.mongooseConnection.on('error', msg => {
+			logger.error(`Mongoose default connection error: ${msg}`);
+		});
 
-    this.mongooseConnection.on('disconnected', () => {
-      logger.info('Mongoose default connection is disconnected.');
-      setTimeout(() => {
-        this.mongooseInstance = setUpMongooseInstance();
-      }, this.RECONNECT_INTERVAL);
-    });
+		this.mongooseConnection.on('disconnected', () => {
+			logger.info('Mongoose default connection is disconnected.');
+			setTimeout(() => {
+				this.mongooseInstance = setUpMongooseInstance();
+			}, this.RECONNECT_INTERVAL);
+		});
 
-    this.mongooseConnection.on('reconnected', () => {
-      logger.info('Mongoose default connection is reconnected.');
-    });
+		this.mongooseConnection.on('reconnected', () => {
+			logger.info('Mongoose default connection is reconnected.');
+		});
 
-    process.on('SIGINT', async () => {
-      await this.mongooseConnection.close();
-      logger.info('Mongoose default connection is disconnected through app termiation.');
-      process.exit(0);
-    });
+		process.on('SIGINT', async () => {
+			await this.mongooseConnection.close();
+			logger.info('Mongoose default connection is disconnected through app termiation.');
+			process.exit(0);
+		});
 
-    this.mongooseInstance = setUpMongooseInstance();
+		this.mongooseInstance = setUpMongooseInstance();
 
-    return this.mongooseInstance;
+		return this.mongooseInstance;
 	}
 
 }

@@ -4,14 +4,14 @@ import { logger } from '@app/middleware/common/Logging';
 import { getEnvVar } from './Utils';
 
 enum ApplicationEnvironment {
-  DEVELOPMENT = 'development', // default one
-  PRODUCTION  = 'production'
+	DEVELOPMENT = 'development', // default one
+	PRODUCTION  = 'production',
 }
 
 export default class Application {
 
-  private static port = +getEnvVar('PORT', '8000');
-  private static env  =  getEnvVar('NODE_ENV', ApplicationEnvironment.DEVELOPMENT);
+	private static port = +getEnvVar('PORT', '8000');
+	private static env  =  getEnvVar('NODE_ENV', ApplicationEnvironment.DEVELOPMENT);
 
 	public server:      any;
 	public express:     ExpressConfig;
@@ -23,14 +23,14 @@ export default class Application {
 		this.express.app.listen(Application.port, () => {
 			logger.info(`Server has started!`);
 		});
-  }
-  
-  public static isDevelopmentEnv() {
-    return this.env == ApplicationEnvironment.DEVELOPMENT;
-  }
+	}
 
-  public static isProductionEnv() {
-    return this.env == ApplicationEnvironment.PRODUCTION;
-  }
+	public static isDevelopmentEnv() {
+		return this.env === ApplicationEnvironment.DEVELOPMENT;
+	}
+
+	public static isProductionEnv() {
+		return this.env === ApplicationEnvironment.PRODUCTION;
+	}
 
 }

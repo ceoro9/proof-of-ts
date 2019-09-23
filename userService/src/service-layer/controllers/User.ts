@@ -4,12 +4,11 @@ import UserDataAgent from '@app/data-layer/data-agents/UserDataAgent';
 import UserResponse from '@app/service-layer/responses/UserResponse';
 import UserRegisterRequest from '@app/service-layer/requests/UserRegisterRequest';
 import UserRegisterRequestValidationSchema from '@app/business-layer/validators/UserRegisterRequestValidationSchema';
-import { ValidationError } from 'class-validator';
 
 @JsonController('/users')
 export class UsersController {
 
-  private userDataAgent: UserDataAgent;
+	private userDataAgent: UserDataAgent;
 
 	public constructor() {
 		this.userDataAgent = new UserDataAgent();
@@ -17,19 +16,17 @@ export class UsersController {
 
 	@Get('/:userId')
 	public async getOne(@Param('userId') userId: string) {
-    logger.info(`Get user by id: ${userId}`);
-    // TODO: catch exceptions
-    const result = await this.userDataAgent.getUserById(userId);
-    return new UserResponse(result).getDetailed();
-  }
-  
-  @Post('/')
-  public async register(@Body() request: UserRegisterRequest) {
-    logger.info('Register user');
-    await new UserRegisterRequestValidationSchema(request).validate();
-    // TODO: catch exceptions
-    const result = await this.userDataAgent.createNewUser(request);
-    return new UserResponse(result).getSuccessRegistration();
-  }
+		logger.info(`Get user by id: ${userId}`);
+		const result = await this.userDataAgent.getUserById(userId);
+		return new UserResponse(result).getDetailed();
+	}
+
+	@Post('/')
+	public async register(@Body() request: UserRegisterRequest) {
+		logger.info('Register user');
+		await new UserRegisterRequestValidationSchema(request).validate();
+		const result = await this.userDataAgent.createNewUser(request);
+		return new UserResponse(result).getSuccessRegistration();
+	}
 
 }

@@ -17,7 +17,6 @@
         "new-parens":                 true,
         "no-redundant-jsdoc":         true,
         "encoding":                   true,
-        "newline-before-return":      true,
         "no-require-imports":         true,
 		"no-empty-interface":         false,
 		"jsdoc-format":               false,
