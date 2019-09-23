@@ -20,8 +20,8 @@ export default class ExpressConfig {
 	}
 
 	private setUpExpressServer() {
-	  const controllersPath = path.resolve('dist', 'service-layer', 'controllers');
-	  const middlewaresPath = path.resolve('dist', 'middleware', 'custom-middleware');
+		const controllersPath = path.resolve('dist', 'service-layer', 'controllers');
+		const middlewaresPath = path.resolve('dist', 'middleware', 'custom-middleware');
 		useExpressServer(this.app, {
 			defaultErrorHandler: false, // disable default error handler
 			controllers: [controllersPath + '/*.js'],

@@ -4,19 +4,20 @@ export default class UserResponse {
 
 	public constructor(private user: UserModel) { }
 
-	public getDetailed() {
-		const { firstName, lastName, username } = this.user;
+	public detailed() {
+		const { firstName, lastName, username, gender } = this.user;
 		return {
 			firstName,
 			lastName,
 			username,
+			gender,
 		};
 	}
 
-	public getSuccessRegistration() {
+	public afterRegistration() {
 		const { privilege } = this.user;
 		return {
-			...this.getDetailed(),
+			...this.detailed(),
 			privilege,
 		};
 	}

@@ -16,13 +16,28 @@ export default class UserDataAgent {
 		}
 		const result = await UserRepository.findById(userId).exec();
 		if (isNull(result)) {
-			throw new NotFound('Not found.');
+			throw new NotFound('User not found.');
 		}
 		return result;
 	}
 
 	public async createNewUser(user: any) {
 		return UserRepository.create(user);
+	}
+
+	public async updateUserById(userId: string, newUserData: any) {
+		if (!mongoose.Types.ObjectId.isValid(userId)) {
+			throw new BadRequest('Incorrect user id format.');
+		}
+		const result = await UserRepository.findOneAndUpdate(
+			{ _id: userId },
+			{ $set: newUserData },
+			{ new: true },
+		).exec();
+		if (isNull(result)) {
+			throw new NotFound('User not found.');
+		}
+		return result;
 	}
 
 }

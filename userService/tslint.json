@@ -4,7 +4,7 @@
     "rules": {
         "max-line-length":            [true, 120],
         "max-file-line-count":        [true, 400],
-        "max-classes-per-file":       [true, 1],
+        "max-classes-per-file":       [true, 3],
         "no-consecutive-blank-lines": [true, 2],
 		"indent":                     [true, "tabs", 2],
 		"interface-name":             [true, "never-prefix"],
