@@ -4,6 +4,7 @@ import UserDataAgent from '@app/data-layer/data-agents/UserDataAgent';
 import UserResponse from '@app/service-layer/responses/UserResponse';
 import UserRegisterRequest from '@app/service-layer/requests/UserRegisterRequest';
 import UserRegisterRequestValidationSchema from '@app/business-layer/validators/UserRegisterRequestValidationSchema';
+import { ValidationError } from 'class-validator';
 
 @JsonController('/users')
 export class UsersController {
@@ -25,16 +26,7 @@ export class UsersController {
   @Post('/')
   public async register(@Body() request: UserRegisterRequest) {
     logger.info('Register user');
-    const validationErrors = await new UserRegisterRequestValidationSchema(request).validate();
-    // TODO: create abstraction to handle incorrect request
-    if (validationErrors.length) {
-      throw {
-        throw: true,
-        status: 400,
-        message: 'Incorrect input',
-        data: validationErrors
-      };
-    }
+    await new UserRegisterRequestValidationSchema(request).validate();
     // TODO: catch exceptions
     const result = await this.userDataAgent.createNewUser(request);
     return new UserResponse(result).getSuccessRegistration();

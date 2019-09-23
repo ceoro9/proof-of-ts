@@ -16,13 +16,16 @@ export default class ExpressConfig {
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.urlencoded({ extended: true }));
 
-		this.setUpControllers();
+		this.setUpExpressServer();
 	}
 
-	private setUpControllers() {
+	private setUpExpressServer() {
 		const controllersPath = path.resolve('dist', 'service-layer', 'controllers');
+    const middlewaresPath = path.resolve('dist', 'middleware', 'custom-middleware');
 		useExpressServer(this.app, {
+      defaultErrorHandler: false, // disable default error handler
 			controllers: [controllersPath + '/*.js'],
+			middlewares: [middlewaresPath + '/*.js'],
 		});
 	}
 

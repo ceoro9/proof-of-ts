@@ -1,11 +1,12 @@
-import _ from 'lodash';
-import { validate } from 'class-validator';
+import { validate as validateSchema } from 'class-validator';
 
 export default class BaseValidationSchema {
   
   public async validate() {
-    const validationResults = await validate(this); 
-    return validationResults.map((item) => _.pick(item, 'constraints', 'property'))
+    const validationErrors = await validateSchema(this);
+    if (validationErrors.length) {
+      throw validationErrors;
+    }
   }
 
 }

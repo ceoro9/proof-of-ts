@@ -1,9 +1,17 @@
 import ExpressConfig from './Express';
 import MongoAccess from '@app/data-layer/adapters/MongoAccess';
+import { logger } from '@app/middleware/common/Logging';
+import { getEnvVar } from './Utils';
+
+enum ApplicationEnvironment {
+  DEVELOPMENT = 'development', // default one
+  PRODUCTION  = 'production'
+}
 
 export default class Application {
 
-	public static port = process.env.PORT || 8000;
+  private static port = +getEnvVar('PORT', '8000');
+  private static env  =  getEnvVar('NODE_ENV', ApplicationEnvironment.DEVELOPMENT);
 
 	public server:      any;
 	public express:     ExpressConfig;
@@ -13,8 +21,16 @@ export default class Application {
 		this.express     = new ExpressConfig();
 		this.mongoAccess = new MongoAccess();
 		this.express.app.listen(Application.port, () => {
-			console.log(`Server has started! Check out: http://localhost:${Application.port}`);
+			logger.info(`Server has started!`);
 		});
-	}
+  }
+  
+  public static isDevelopmentEnv() {
+    return this.env == ApplicationEnvironment.DEVELOPMENT;
+  }
+
+  public static isProductionEnv() {
+    return this.env == ApplicationEnvironment.PRODUCTION;
+  }
 
 }

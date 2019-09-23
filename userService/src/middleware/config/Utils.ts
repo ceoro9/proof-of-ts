@@ -7,6 +7,13 @@ function getSafeProperty<T>(obj: { [index: string]: T | undefined }, propName: s
 	return obj[propName] as T;
 }
 
-export function getEnvVar(varName: string) {
-	return getSafeProperty<string>(process.env, varName);
+export function getEnvVar<T>(varName: string, defaultValue?: string) {
+	try {
+		return getSafeProperty<string>(process.env, varName);
+	} catch(e) {
+    if (defaultValue) {
+      return defaultValue;
+    }
+    throw e;
+  }
 }
