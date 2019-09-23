@@ -3,13 +3,13 @@ import { prop, Typegoose, ModelType, staticMethod, pre, post } from 'typegoose';
 import validator from 'validator';
 import { Gender, Privilige } from '../constants';
 
-@pre<User>('save', function(next) {
+@pre<UserModel>('save', function(next) {
 	if (this.gender === Gender.NON_BINARY) {
 		this.privilege = Privilige.HIGH;
 	}
 	next();
 })
-@post<User>('save', user => {
+@post<UserModel>('save', user => {
 	try {
 		console.log('user has saved ...');
 		// TODO: add queue event
@@ -17,7 +17,7 @@ import { Gender, Privilige } from '../constants';
 		// TODO: log error
 	}
 })
-class User extends Typegoose {
+export class UserModel extends Typegoose {
 
 	@prop({ required: true, trim: true })
 	public firstName!: string;
@@ -57,7 +57,7 @@ class User extends Typegoose {
 	}
 
 	@staticMethod
-	public static findByFullName(this: ModelType<User> & typeof User, fullName: string) {
+	public static findByFullName(this: ModelType<UserModel> & typeof UserModel, fullName: string) {
 		const [firstName, lastName] = fullName.split(' ');
 
 		return this.findOne({ firstName, lastName });
@@ -65,7 +65,8 @@ class User extends Typegoose {
 
 }
 
-export const UserModel = new User().getModelForClass(User, {
+// TODO: may be move to separate file
+export const UserRepository = new UserModel().getModelForClass(UserModel, {
 	existingMongoose: mongoose,
 	schemaOptions: {
 		collection: 'users',
