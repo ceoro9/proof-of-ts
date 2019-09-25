@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 import { UserRepository } from '@app/data-layer/models/User';
 import { NotFound, BadRequest } from 'http-errors';
+import { Service } from 'typedi';
 
 function isNull(obj: any): obj is null {
 	return obj === null && typeof null === 'object';
 }
 
+@Service()
 export default class UserDataAgent {
 
 	public constructor() { }

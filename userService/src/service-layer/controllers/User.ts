@@ -14,11 +14,7 @@ import {
 @JsonController('/users')
 export class UsersController {
 
-	private userDataAgent: UserDataAgent;
-
-	public constructor() {
-		this.userDataAgent = new UserDataAgent();
-	}
+	public constructor(private userDataAgent: UserDataAgent) { }
 
 	@Get('/:userId')
 	public async getOne(@Param('userId') userId: string) {
@@ -28,7 +24,7 @@ export class UsersController {
 	}
 
 	@Post('/')
-	public async register(@Body() request: UserRegisterRequest) {
+	public async register(@Body({ required: true }) request: UserRegisterRequest) {
 		logger.info('Register user');
 		await new UserRegisterRequestValidationSchema(request).validate();
 		const result = await this.userDataAgent.createNewUser(request);

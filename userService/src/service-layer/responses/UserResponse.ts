@@ -30,7 +30,7 @@ export default class UserResponse {
 		return {
 			id,
 			status,
-		}
+		};
 	}
 
 }

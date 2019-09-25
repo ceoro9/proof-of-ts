@@ -6,11 +6,7 @@ import { logger } from '@app/middleware/common/Logging';
 @JsonController('/user-status/:userId')
 export class UserStatusController {
 
-	private userStatusDataAgent: UserStatusAgent;
-
-	public constructor() {
-		this.userStatusDataAgent = new UserStatusAgent();
-	}
+	public constructor(private userStatusDataAgent: UserStatusAgent) { }
 
 	@Post('/ban')
 	public async banUser(@Param('userId') userId: string) {

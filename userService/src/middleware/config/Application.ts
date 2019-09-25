@@ -1,4 +1,6 @@
 import ExpressConfig from './Express';
+import { Container } from 'typedi';
+import { useContainer } from 'routing-controllers';
 import MongoAccess from '@app/data-layer/adapters/MongoAccess';
 import { logger } from '@app/middleware/common/Logging';
 import { getEnvVar } from './Utils';
@@ -18,6 +20,7 @@ export default class Application {
 	public mongoAccess: MongoAccess;
 
 	public constructor() {
+		useContainer(Container);
 		this.express     = new ExpressConfig();
 		this.mongoAccess = new MongoAccess();
 		this.express.app.listen(Application.port, () => {

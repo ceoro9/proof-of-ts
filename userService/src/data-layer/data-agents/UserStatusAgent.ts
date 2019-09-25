@@ -2,11 +2,13 @@ import mongoose from 'mongoose';
 import { NotFound, BadRequest } from 'http-errors';
 import { UserRepository } from '@app/data-layer/models/User';
 import { UserStatus } from '@app/data-layer/constants';
+import { Service } from 'typedi';
 
 function isNull(obj: any): obj is null {
 	return obj === null && typeof null === 'object';
 }
 
+@Service()
 export default class UserStatusAgent {
 
 	public constructor() { }
@@ -19,10 +21,10 @@ export default class UserStatusAgent {
 			userId,
 			{
 				$set: {
-					status: UserStatus.BANNED
-				}
+					status: UserStatus.BANNED,
+				},
 			},
-			{ new: true }
+			{ new: true },
 		);
 		if (isNull(updatedUser)) {
 			throw new NotFound('User not found.');
@@ -38,10 +40,10 @@ export default class UserStatusAgent {
 			userId,
 			{
 				$set: {
-					status: UserStatus.DELETED
-				}
+					status: UserStatus.DELETED,
+				},
 			},
-			{ new: true }
+			{ new: true },
 		);
 		if (isNull(updatedUser)) {
 			throw new NotFound('User not found.');
