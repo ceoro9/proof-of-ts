@@ -1,9 +1,7 @@
-import { IsEmail, Length, MinLength, MaxLength, IsEnum, IsOptional } from 'class-validator';
+import { IsEmail, Length, MinLength, MaxLength, IsEnum, IsOptional, MetadataStorage } from 'class-validator';
 import BaseValidationSchema from './BaseValidationSchema';
 import { UserRegisterRequest, UserPatchRequest } from '@app/service-layer/requests/UserRequest';
 import { Gender } from '@app/data-layer/constants';
-
-// TODO: find better way to validate input request to escape code repetition
 
 export class UserRegisterRequestValidationSchema extends BaseValidationSchema implements UserRegisterRequest {
 

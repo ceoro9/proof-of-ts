@@ -7,6 +7,8 @@ export enum Gender {
 export enum UserStatus {
 	ACTIVE  = 'Active',
 	BLOCKED = 'Blocked',
+	BANNED  = 'Banned',
+	DELETED = 'Deleted',
 }
 
 export enum Privilige {

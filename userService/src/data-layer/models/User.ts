@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { prop, Typegoose, ModelType, staticMethod, pre, post } from 'typegoose';
 import validator from 'validator';
-import { Gender, Privilige } from '../constants';
+import { Gender, Privilige, UserStatus } from '../constants';
 
 @pre<UserModel>('save', function(next) {
 	if (this.gender === Gender.NON_BINARY) {
@@ -18,6 +18,8 @@ import { Gender, Privilige } from '../constants';
 	}
 })
 export class UserModel extends Typegoose {
+
+	public _id!: mongoose.Types.ObjectId;
 
 	@prop({ required: true, trim: true })
 	public firstName!: string;
@@ -45,6 +47,9 @@ export class UserModel extends Typegoose {
 	@prop({ enum: Privilige, default: Privilige.LOW })
 	public privilege!: Privilige;
 
+	@prop({ enum: UserStatus, default: UserStatus.ACTIVE })
+	public status!: UserStatus;
+
 	@prop()
 	get fullName() {
 		return `${this.firstName} ${this.lastName}`;
@@ -54,6 +59,11 @@ export class UserModel extends Typegoose {
 		const [firstName, lastName] = full.split(' ');
 		this.firstName = firstName;
 		this.lastName = lastName;
+	}
+
+	@prop()
+	get id() {
+		return this._id.toHexString();
 	}
 
 	@staticMethod
