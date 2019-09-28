@@ -3,25 +3,9 @@ import { ExpressErrorMiddlewareInterface, Middleware } from 'routing-controllers
 import { ValidationError } from 'class-validator';
 import { logger } from '@app/middleware/common/Logging';
 import { ServerErrorResponse } from '@app/service-layer/responses/ErrorResponse';
+import { isArray, isHttpError, isError, isString } from '@app/utils/TypeGuards';
 import Application from '@app/middleware/config/Application';
-import { HttpError } from 'http-errors';
 
-// TODO: move to separate file
-function isArray<T>(obj: any): obj is T[] {
-	return Array.isArray(obj);
-}
-
-function isError(obj: any): obj is Error {
-	return obj instanceof Error;
-}
-
-function isString(obj: any): obj is string {
-	return typeof obj === 'string';
-}
-
-function isHttpError(obj: any): obj is HttpError {
-	return obj instanceof HttpError;
-}
 
 /**
  * Express middleware to catch error throwed in

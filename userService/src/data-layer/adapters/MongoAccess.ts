@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getEnvVar } from '@app/middleware/config/Utils';
+import { getEnvVar } from '@app/utils/Configuration';
 import { logger } from '@app/middleware/common/Logging';
 
 interface MongoConnectionConfig {

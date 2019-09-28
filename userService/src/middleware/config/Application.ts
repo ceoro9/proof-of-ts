@@ -3,7 +3,7 @@ import { Container } from 'typedi';
 import { useContainer } from 'routing-controllers';
 import MongoAccess from '@app/data-layer/adapters/MongoAccess';
 import { logger } from '@app/middleware/common/Logging';
-import { getEnvVar } from './Utils';
+import { getEnvVar } from '@app/utils/Configuration';
 
 enum ApplicationEnvironment {
 	DEVELOPMENT = 'development', // default one

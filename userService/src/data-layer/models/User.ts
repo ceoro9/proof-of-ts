@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
 import { prop, Typegoose, ModelType, staticMethod, pre, post } from 'typegoose';
-import validator from 'validator';
 import { Gender, Privilige, UserStatus } from '../constants';
 
 @pre<UserModel>('save', function(next) {
@@ -21,24 +20,16 @@ export class UserModel extends Typegoose {
 
 	public _id!: mongoose.Types.ObjectId;
 
-	@prop({ required: true, trim: true })
+	@prop({ required: true })
 	public firstName!: string;
 
-	@prop({ required: true, trim: true })
+	@prop({ required: true })
 	public lastName!: string;
 
-	@prop({ required: true, unique: true, trim: true })
+	@prop({ required: true, unique: true })
 	public username!: string;
 
-	@prop({
-		required: true,
-		validate: [
-			{
-				validator: validator.isEmail,
-				message: `{VALUE} is not a valid email`,
-			},
-		],
-	})
+	@prop({ required: true })
 	public email!: string;
 
 	@prop({ required: true, enum: Gender })
@@ -69,7 +60,6 @@ export class UserModel extends Typegoose {
 	@staticMethod
 	public static findByFullName(this: ModelType<UserModel> & typeof UserModel, fullName: string) {
 		const [firstName, lastName] = fullName.split(' ');
-
 		return this.findOne({ firstName, lastName });
 	}
 

@@ -2,10 +2,7 @@ import mongoose from 'mongoose';
 import { UserRepository } from '@app/data-layer/models/User';
 import { NotFound, BadRequest } from 'http-errors';
 import { Service } from 'typedi';
-
-function isNull(obj: any): obj is null {
-	return obj === null && typeof null === 'object';
-}
+import { isNull } from '@app/utils/TypeGuards';
 
 @Service()
 export default class UserDataAgent {
@@ -16,14 +13,14 @@ export default class UserDataAgent {
 		if (!mongoose.Types.ObjectId.isValid(userId)) {
 			throw new BadRequest('Incorrect user id format.');
 		}
-		const result = await UserRepository.findById(userId).exec();
-		if (isNull(result)) {
+		const foundUser = await UserRepository.findById(userId).exec();
+		if (isNull(foundUser)) {
 			throw new NotFound('User not found.');
 		}
-		return result;
+		return foundUser;
 	}
 
-	public async createNewUser(user: any) {
+	public createNewUser(user: any) {
 		return UserRepository.create(user);
 	}
 
@@ -31,15 +28,16 @@ export default class UserDataAgent {
 		if (!mongoose.Types.ObjectId.isValid(userId)) {
 			throw new BadRequest('Incorrect user id format.');
 		}
-		const result = await UserRepository.findOneAndUpdate(
+		// TODO: change on replaceOne method
+		const updatedUser = await UserRepository.findOneAndUpdate(
 			{ _id: userId },
 			{ $set: newUserData },
 			{ new: true },
 		).exec();
-		if (isNull(result)) {
+		if (isNull(updatedUser)) {
 			throw new NotFound('User not found.');
 		}
-		return result;
+		return updatedUser;
 	}
 
 }

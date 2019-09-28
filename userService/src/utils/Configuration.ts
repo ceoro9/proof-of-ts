@@ -1,4 +1,3 @@
-
 function getSafeProperty<T>(obj: { [index: string]: T | undefined }, propName: string) {
 	if (!(propName in obj) || obj[propName] === undefined) {
 		throw new Error(`'${propName}' property is not set`);

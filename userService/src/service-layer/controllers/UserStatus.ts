@@ -4,7 +4,7 @@ import UserResponse from '@app/service-layer/responses/UserResponse';
 import { logger } from '@app/middleware/common/Logging';
 
 @JsonController('/user-status/:userId')
-export class UserStatusController {
+export default class UserStatusController {
 
 	public constructor(private userStatusDataAgent: UserStatusAgent) { }
 
