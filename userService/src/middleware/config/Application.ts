@@ -1,7 +1,8 @@
 import ExpressConfig from './Express';
 import { Container } from 'typedi';
 import { useContainer } from 'routing-controllers';
-import MongoAccess from '@app/data-layer/adapters/MongoAccess';
+import MongoAccess  from '@app/data-layer/adapters/MongoAccess';
+import RabbitAccess from '@app/data-layer/adapters/RabbitAccess';
 import { logger } from '@app/middleware/common/Logging';
 import { getEnvVar } from '@app/utils/Configuration';
 
@@ -15,14 +16,17 @@ export default class Application {
 	private static port = +getEnvVar('PORT', '8000');
 	private static env  =  getEnvVar('NODE_ENV', ApplicationEnvironment.DEVELOPMENT);
 
-	public server:      any;
-	public express:     ExpressConfig;
-	public mongoAccess: MongoAccess;
+	public server:       any;
+	public express:      ExpressConfig;
+	public mongoAccess:  MongoAccess;
+	public rabbitAccess: RabbitAccess;
 
 	public constructor() {
 		useContainer(Container);
-		this.express     = new ExpressConfig();
-		this.mongoAccess = new MongoAccess();
+		this.express      = new ExpressConfig();
+		this.mongoAccess  = new MongoAccess();
+		this.rabbitAccess = new RabbitAccess();
+		// TODO: wait until all connections are going to be opened
 		this.express.app.listen(Application.port, () => {
 			logger.info(`Server has started!`);
 		});

@@ -1,5 +1,6 @@
 version: '3'
 services:
+  
   user_service:
     build: ./userService
     container_name: user_service
@@ -9,8 +10,10 @@ services:
       - ./userService/env-vars.env
     links:
       - user_mongo:database
+      - user_rabbit:queue
     networks: 
       - backend
+  
   user_mongo:
     image: mongo:latest
     container_name: user_mongo
@@ -20,6 +23,21 @@ services:
       - ./userService/data:/data/db
     networks: 
       - backend
+  
+  user_rabbit:
+    image: rabbitmq:3.8-rc-management
+    container_name: user_rabbit
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER:  "rabbitmq"
+      RABBITMQ_DEFAULT_PASS:  "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - backend
+    
 networks:
   backend:
     driver: 'bridge'
