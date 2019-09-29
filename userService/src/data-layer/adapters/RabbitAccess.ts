@@ -5,17 +5,19 @@ import { getEnvVar } from '@app/utils/Configuration';
 
 export default class RabbitAccess {
 
+	public static RECONNECT_INTERVAL = 5000; // in ms
+
 	private static rabbitConnection: Connection | null = null;
 	private static rabbitChannel:    Channel    | null = null;
 
-	private static envRabbitConfig: Options.Connect = {
+	private static envConfig: Options.Connect = {
 		hostname:  getEnvVar('RABBITMQ_HOSTNAME'),
 		port:     +getEnvVar('RABBITMQ_PORT'),
 		username:  getEnvVar('RABBITMQ_USERNAME'),
 		password:  getEnvVar('RABBITMQ_PASSWORD'),
 	}
 	
-	public constructor(config: Options.Connect = RabbitAccess.envRabbitConfig) {
+	public constructor(config: Options.Connect = RabbitAccess.envConfig) {
 		RabbitAccess.connect(config);
 	}
 
@@ -25,17 +27,18 @@ export default class RabbitAccess {
 		
 		try {
 			this.rabbitConnection = await connect(config);
+			logger.info('Connection to RabbitMQ is opened');
 		} catch(err) {
 			logger.error(`Error connecting to RabbitMQ: ${err}`);
 			logger.info('Reconnecting to RabbitMQ ...');
-			setTimeout(() => this.connect(config), 5000);
+			setTimeout(() => this.connect(config), this.RECONNECT_INTERVAL);
 			return;
 		}
 		
 		this.rabbitConnection.on('error', (err) => {
 			logger.error(`Rabbit default connection error: ${err}`);
 			logger.info('Reconnecting to RabbitMQ ...');
-			setTimeout(() => this.connect(config), 5000);
+			setTimeout(() => this.connect(config), this.RECONNECT_INTERVAL);
 		});
 
 		this.rabbitConnection.on('close', () => {
@@ -58,7 +61,24 @@ export default class RabbitAccess {
 			process.exit(0);
 		});
 
-		this.rabbitChannel = await this.rabbitConnection.createChannel();
+		this.createChannel();
+	}
+
+	public static async createChannel() {
+		
+		if (isNull(this.rabbitConnection)) {
+			throw new Error('Rabbit default connection is not established');
+		}
+
+		try {
+			this.rabbitChannel = await this.rabbitConnection.createChannel();
+			logger.info('Channel connection to RabbitMQ is opened');
+		} catch(err) {
+			logger.error(`Error establishing connection channel to RabbitMQ: ${err}`);
+			logger.info('Re-establishing connection channel to RabbitMQ');
+			setTimeout(this.createChannel.bind(this), this.RECONNECT_INTERVAL);
+			return;
+		}
 
 		this.rabbitChannel.on('close', () => {
 			logger.info('Rabbit default channel is closed');
@@ -66,6 +86,8 @@ export default class RabbitAccess {
 
 		this.rabbitChannel.on('error', (err) => {
 			logger.error(`Rabbit default channel connection error: ${err}`);
+			logger.info('Re-establishing connection channel to RabbitMQ');
+			setTimeout(this.createChannel.bind(this), this.RECONNECT_INTERVAL);
 		});
 
 		this.rabbitChannel.on('return', (msg) => {

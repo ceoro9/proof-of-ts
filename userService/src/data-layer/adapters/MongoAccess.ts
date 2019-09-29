@@ -3,18 +3,23 @@ import { getEnvVar } from '@app/utils/Configuration';
 import { logger } from '@app/middleware/common/Logging';
 
 interface MongoConnectionConfig {
-	dbURL?:  string;
-	dbName?: string;
+	dbURL:  string;
+	dbName: string;
 }
 
 export default class MongoAccess {
 
-	public static RECONNECT_INTERVAL = 10000; // in ms
+	public static RECONNECT_INTERVAL = 5000; // in ms
 
 	private static mongooseInstance:   any;
 	private static mongooseConnection: mongoose.Connection;
 
-	public constructor(config: MongoConnectionConfig = {}) {
+	private static envConfig: MongoConnectionConfig = {
+		dbURL:  getEnvVar('DATABASE_URL'),
+		dbName: getEnvVar('DATABASE_NAME'),
+	}
+
+	public constructor(config: MongoConnectionConfig = MongoAccess.envConfig) {
 		MongoAccess.connect(config);
 	}
 
@@ -24,11 +29,7 @@ export default class MongoAccess {
 			return this.mongooseInstance;
 		}
 
-		const {
-			dbURL  = getEnvVar('DATABASE_URL'),
-			dbName = getEnvVar('DATABASE_NAME'),
-		} = config;
-
+		const { dbURL, dbName } = config;
 		const setUpMongooseInstance = () => mongoose.connect(dbURL + dbName, { useNewUrlParser: true });
 
 		this.mongooseConnection = mongoose.connection;
