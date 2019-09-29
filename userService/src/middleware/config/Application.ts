@@ -26,10 +26,22 @@ export default class Application {
 		this.express      = new ExpressConfig();
 		this.mongoAccess  = new MongoAccess();
 		this.rabbitAccess = new RabbitAccess();
-		// TODO: wait until all connections are going to be opened
+		this.startServer();
+	}
+
+	public async startServer() {
+		// wait for data adapters to set up
+		await Promise.all(this.getDataAdapters());
 		this.express.app.listen(Application.port, () => {
 			logger.info(`Server has started!`);
 		});
+	}
+
+	private getDataAdapters() {
+		return [
+			this.mongoAccess,
+			this.rabbitAccess,
+		]
 	}
 
 	public static isDevelopmentEnv() {

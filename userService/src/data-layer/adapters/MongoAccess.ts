@@ -1,13 +1,14 @@
 import mongoose from 'mongoose';
 import { getEnvVar } from '@app/utils/Configuration';
 import { logger } from '@app/middleware/common/Logging';
+import { PromiseAccess, ItemChainCb } from './BaseAccess';
 
 interface MongoConnectionConfig {
 	dbURL:  string;
 	dbName: string;
 }
 
-export default class MongoAccess {
+export default class MongoAccess extends PromiseAccess {
 
 	public static RECONNECT_INTERVAL = 5000; // in ms
 
@@ -20,10 +21,14 @@ export default class MongoAccess {
 	}
 
 	public constructor(config: MongoConnectionConfig = MongoAccess.envConfig) {
-		MongoAccess.connect(config);
+		super();
+		const onFulfilled = this.resolve.bind(this);
+		const onRejected  = this.reject.bind(this);
+		MongoAccess.connect(config, { onFulfilled, onRejected });
 	}
 
-	private static connect(config: MongoConnectionConfig): mongoose.Connection {
+
+	private static connect(config: MongoConnectionConfig, { onFulfilled, onRejected }: ItemChainCb): mongoose.Connection {
 
 		if (this.mongooseInstance) {
 			return this.mongooseInstance;
@@ -40,10 +45,12 @@ export default class MongoAccess {
 
 		this.mongooseConnection.on('connected', () => {
 			logger.info('Mongoose default connection is connected.');
+			onFulfilled(null);
 		});
 
 		this.mongooseConnection.on('error', msg => {
 			logger.error(`Mongoose default connection error: ${msg}`);
+			onRejected(new Error(msg));
 		});
 
 		this.mongooseConnection.on('disconnected', () => {
@@ -63,6 +70,7 @@ export default class MongoAccess {
 			process.exit(0);
 		});
 
+		logger.info('Connecting to MongoDB');
 		this.mongooseInstance = setUpMongooseInstance();
 
 		return this.mongooseInstance;

@@ -2,10 +2,12 @@ import { connect, Options, Connection, Channel } from 'amqplib';
 import { logger } from '@app/middleware/common/Logging';
 import { isNull } from '@app/utils/TypeGuards';
 import { getEnvVar } from '@app/utils/Configuration';
+import { PromiseAccess, ItemChainCb } from './BaseAccess';
 
-export default class RabbitAccess {
+export default class RabbitAccess extends PromiseAccess {
 
-	public static RECONNECT_INTERVAL = 5000; // in ms
+	private static RECONNECT_INTERVAL = 5000; // in ms
+	private static MAX_RETRY_COUNT    = 5;
 
 	private static rabbitConnection: Connection | null = null;
 	private static rabbitChannel:    Channel    | null = null;
@@ -18,27 +20,41 @@ export default class RabbitAccess {
 	}
 	
 	public constructor(config: Options.Connect = RabbitAccess.envConfig) {
-		RabbitAccess.connect(config);
+		super();
+		const onFulfilled = this.resolve.bind(this);
+		const onRejected  = this.reject.bind(this);
+		RabbitAccess.connect(1, config, { onFulfilled, onRejected });
 	}
 
-	public static async connect(config: Options.Connect) {
+	public static async connect(tryCount: number, config: Options.Connect, { onFulfilled, onRejected }: ItemChainCb) {
 
 		logger.info(`Connecting to RabbitMQ: ${JSON.stringify(config)}`);
 		
 		try {
 			this.rabbitConnection = await connect(config);
 			logger.info('Connection to RabbitMQ is opened');
+			// TODO: may be fulfill only when connection channel is ready
+			onFulfilled(null)
 		} catch(err) {
+			
 			logger.error(`Error connecting to RabbitMQ: ${err}`);
+
+			if (tryCount >= this.MAX_RETRY_COUNT) {
+				logger.error(`Max retry count exceeded. Last error: ${err}`);
+				onRejected(err);
+				return;
+			}
+
 			logger.info('Reconnecting to RabbitMQ ...');
-			setTimeout(() => this.connect(config), this.RECONNECT_INTERVAL);
+			setTimeout(() => this.connect(tryCount + 1, config, { onFulfilled, onRejected }), this.RECONNECT_INTERVAL);
+			
 			return;
 		}
 		
 		this.rabbitConnection.on('error', (err) => {
 			logger.error(`Rabbit default connection error: ${err}`);
 			logger.info('Reconnecting to RabbitMQ ...');
-			setTimeout(() => this.connect(config), this.RECONNECT_INTERVAL);
+			setTimeout(() => this.connect(1, config, { onFulfilled, onRejected }), this.RECONNECT_INTERVAL);
 		});
 
 		this.rabbitConnection.on('close', () => {
