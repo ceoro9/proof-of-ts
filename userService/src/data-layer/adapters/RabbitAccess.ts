@@ -4,49 +4,48 @@ import { isNull } from '@app/utils/TypeGuards';
 import { getEnvVar } from '@app/utils/Configuration';
 import { PromiseAccess, ItemChainCb } from './BaseAccess';
 
-export default class RabbitAccess extends PromiseAccess {
+export default class RabbitAccess extends PromiseAccess<Options.Connect> {
 
-	private static RECONNECT_INTERVAL = 5000; // in ms
-	private static MAX_RETRY_COUNT    = 5;
+	private RECONNECT_INTERVAL = 5000; // in ms
+	private MAX_RETRY_COUNT    = 5;
 
-	private static rabbitConnection: Connection | null = null;
-	private static rabbitChannel:    Channel    | null = null;
+	private rabbitConnection: Connection | null = null;
+	private rabbitChannel:    Channel    | null = null;
 
-	private static envConfig: Options.Connect = {
-		hostname:  getEnvVar('RABBITMQ_HOSTNAME'),
-		port:     +getEnvVar('RABBITMQ_PORT'),
-		username:  getEnvVar('RABBITMQ_USERNAME'),
-		password:  getEnvVar('RABBITMQ_PASSWORD'),
+	public getDefaultEnvConfig() {
+		return {
+			hostname:  getEnvVar('RABBITMQ_HOSTNAME'),
+			port:     +getEnvVar('RABBITMQ_PORT'),
+			username:  getEnvVar('RABBITMQ_USERNAME'),
+			password:  getEnvVar('RABBITMQ_PASSWORD'),
+		};
 	}
 	
-	public constructor(config: Options.Connect = RabbitAccess.envConfig) {
-		super();
-		const onFulfilled = this.resolve.bind(this);
-		const onRejected  = this.reject.bind(this);
-		RabbitAccess.connect(1, config, { onFulfilled, onRejected });
+	public async connect() {
+		this.tryConnect(1);
 	}
 
-	public static async connect(tryCount: number, config: Options.Connect, { onFulfilled, onRejected }: ItemChainCb) {
+	private async tryConnect(tryCount: number) {
 
-		logger.info(`Connecting to RabbitMQ: ${JSON.stringify(config)}`);
+		logger.info(`Connecting to RabbitMQ: ${JSON.stringify(this.config)}`);
 		
 		try {
-			this.rabbitConnection = await connect(config);
+			this.rabbitConnection = await connect(this.config);
 			logger.info('Connection to RabbitMQ is opened');
 			// TODO: may be fulfill only when connection channel is ready
-			onFulfilled(null)
+			this.resolve(null)
 		} catch(err) {
 			
 			logger.error(`Error connecting to RabbitMQ: ${err}`);
 
 			if (tryCount >= this.MAX_RETRY_COUNT) {
 				logger.error(`Max retry count exceeded. Last error: ${err}`);
-				onRejected(err);
+				this.reject(err);
 				return;
 			}
 
 			logger.info('Reconnecting to RabbitMQ ...');
-			setTimeout(() => this.connect(tryCount + 1, config, { onFulfilled, onRejected }), this.RECONNECT_INTERVAL);
+			setTimeout(() => this.tryConnect(tryCount + 1), this.RECONNECT_INTERVAL);
 			
 			return;
 		}
@@ -54,7 +53,7 @@ export default class RabbitAccess extends PromiseAccess {
 		this.rabbitConnection.on('error', (err) => {
 			logger.error(`Rabbit default connection error: ${err}`);
 			logger.info('Reconnecting to RabbitMQ ...');
-			setTimeout(() => this.connect(1, config, { onFulfilled, onRejected }), this.RECONNECT_INTERVAL);
+			setTimeout(() => this.tryConnect(1), this.RECONNECT_INTERVAL);
 		});
 
 		this.rabbitConnection.on('close', () => {
@@ -80,7 +79,7 @@ export default class RabbitAccess extends PromiseAccess {
 		this.createChannel();
 	}
 
-	public static async createChannel() {
+	public async createChannel() {
 		
 		if (isNull(this.rabbitConnection)) {
 			throw new Error('Rabbit default connection is not established');
@@ -115,7 +114,7 @@ export default class RabbitAccess extends PromiseAccess {
 		});	
 	}
 
-	public static async sendToQueue(queueName: string, message: any) {
+	public async sendToQueue(queueName: string, message: any) {
 		if (isNull(this.rabbitChannel)) {
 			throw new Error('Rabbit default channel is not established');
 		} else {
@@ -129,7 +128,7 @@ export default class RabbitAccess extends PromiseAccess {
 		}	
 	}
 
-	public static async publish(exchange: string, routingKey: string, message: any) {
+	public async publish(exchange: string, routingKey: string, message: any) {
 		if (isNull(this.rabbitChannel)) {
 			throw new Error('Rabbit default channel is not established');
 		}

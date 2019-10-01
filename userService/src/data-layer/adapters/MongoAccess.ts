@@ -1,40 +1,35 @@
 import mongoose from 'mongoose';
 import { getEnvVar } from '@app/utils/Configuration';
 import { logger } from '@app/middleware/common/Logging';
-import { PromiseAccess, ItemChainCb } from './BaseAccess';
+import { PromiseAccess } from './BaseAccess';
+import { isNull } from '@app/utils/TypeGuards';
 
 interface MongoConnectionConfig {
 	dbURL:  string;
 	dbName: string;
 }
 
-export default class MongoAccess extends PromiseAccess {
+export default class MongoAccess extends PromiseAccess<MongoConnectionConfig> {
 
-	public static RECONNECT_INTERVAL = 5000; // in ms
+	public RECONNECT_INTERVAL = 5000; // in ms
 
-	private static mongooseInstance:   any;
-	private static mongooseConnection: mongoose.Connection;
+	private mongooseInstance:   any                        = null;
+	private mongooseConnection: mongoose.Connection | null = null;
 
-	private static envConfig: MongoConnectionConfig = {
-		dbURL:  getEnvVar('DATABASE_URL'),
-		dbName: getEnvVar('DATABASE_NAME'),
+	public getDefaultEnvConfig() {
+		return {
+			dbURL:  getEnvVar('DATABASE_URL'),
+			dbName: getEnvVar('DATABASE_NAME'),
+		}
 	}
 
-	public constructor(config: MongoConnectionConfig = MongoAccess.envConfig) {
-		super();
-		const onFulfilled = this.resolve.bind(this);
-		const onRejected  = this.reject.bind(this);
-		MongoAccess.connect(config, { onFulfilled, onRejected });
-	}
-
-
-	private static connect(config: MongoConnectionConfig, { onFulfilled, onRejected }: ItemChainCb): mongoose.Connection {
+	public connect(): mongoose.Connection {
 
 		if (this.mongooseInstance) {
 			return this.mongooseInstance;
 		}
 
-		const { dbURL, dbName } = config;
+		const { dbURL, dbName } = this.config;
 		const setUpMongooseInstance = () => mongoose.connect(dbURL + dbName, { useNewUrlParser: true });
 
 		this.mongooseConnection = mongoose.connection;
@@ -45,12 +40,12 @@ export default class MongoAccess extends PromiseAccess {
 
 		this.mongooseConnection.on('connected', () => {
 			logger.info('Mongoose default connection is connected.');
-			onFulfilled(null);
+			this.resolve(null);
 		});
 
 		this.mongooseConnection.on('error', msg => {
 			logger.error(`Mongoose default connection error: ${msg}`);
-			onRejected(new Error(msg));
+			this.reject(new Error(msg));
 		});
 
 		this.mongooseConnection.on('disconnected', () => {
@@ -65,8 +60,10 @@ export default class MongoAccess extends PromiseAccess {
 		});
 
 		process.on('SIGINT', async () => {
-			await this.mongooseConnection.close();
-			logger.info('Mongoose default connection is disconnected through app termiation.');
+			if (!isNull(this.mongooseConnection)) {
+				await this.mongooseConnection.close();
+				logger.info('Mongoose default connection is disconnected through app termiation.');
+			}
 			process.exit(0);
 		});
 

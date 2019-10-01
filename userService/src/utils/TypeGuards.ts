@@ -1,7 +1,11 @@
 import { HttpError } from 'http-errors';
 
 export function isNull(obj: any): obj is null {
-	return obj === null && typeof null === 'object';
+	return !obj && typeof null === 'object';
+}
+
+export function isUndefined(obj: any): obj is undefined {
+	return typeof obj === 'undefined';
 }
 
 export function isArray<T>(obj: any): obj is T[] {

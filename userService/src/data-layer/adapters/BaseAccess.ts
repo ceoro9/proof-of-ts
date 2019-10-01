@@ -12,11 +12,22 @@ export interface ItemChainCb {
 	onRejected:  OnRejectedCb;
 }
 
-export class PromiseAccess {
+export abstract class PromiseAccess<ConnectionConfigType> {
 
-	protected state: AccessState       = AccessState.PENDING;
-	protected resultValue: any         = undefined;
+	protected state: AccessState           = AccessState.PENDING;
+	protected resultValue: any             = undefined;
 	protected chainCbs: Array<ItemChainCb> = [];
+
+	protected config: ConnectionConfigType;
+
+	public constructor(config: ConnectionConfigType | null = null) {
+		this.config = config || this.getDefaultEnvConfig();
+		this.connect();
+	}
+
+	public abstract getDefaultEnvConfig(): ConnectionConfigType;
+
+	public abstract connect(): any;
 
 	protected resolve(result: any) {
 
