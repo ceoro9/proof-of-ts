@@ -1,7 +1,11 @@
 import { Module, DynamicModule, Provider } from '@nestjs/common';
-import { ConfigService } from './config.service';
+import { ConfigService }                   from './config.service';
+import { WinstonLoggerService }            from './config.winston-logger-service';
 
-@Module({})	
+@Module({
+	providers: [WinstonLoggerService],
+	exports:   [WinstonLoggerService],
+})	
 export class ConfigModule {
 
 	public static register(configObject?: any): DynamicModule {
@@ -12,9 +16,15 @@ export class ConfigModule {
 		};
 
 		return {
-			module:    ConfigModule,
-			providers: [configService],
-			exports:   [configService],
+			module: ConfigModule,
+			providers: [
+				WinstonLoggerService,
+				configService,
+			],
+			exports: [
+				WinstonLoggerService,
+				configService,
+			],
 		};
 	}
 

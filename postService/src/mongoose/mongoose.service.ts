@@ -1,7 +1,12 @@
 
 import mongoose from 'mongoose';
+import { 
+	Injectable,
+	OnApplicationShutdown,
+	OnApplicationBootstrap,
+} from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
-import { Injectable, OnApplicationShutdown, OnApplicationBootstrap } from '@nestjs/common';
+import { ILogger } from '../logger';
 
 @Injectable()
 export class MongooseService implements OnApplicationBootstrap, OnApplicationShutdown {
@@ -11,7 +16,7 @@ export class MongooseService implements OnApplicationBootstrap, OnApplicationShu
 	public mongooseInstance?: typeof mongoose;
 	public connection?: mongoose.Connection;
 
-	public constructor(private configService: ConfigService) {}
+	public constructor(private logger: ILogger, private configService: ConfigService) {}
 
 	/**
 	 * Set up mongoose connection and resolve
@@ -29,31 +34,31 @@ export class MongooseService implements OnApplicationBootstrap, OnApplicationShu
 			this.connection = mongoose.connection;
 
 			this.connection.on('open', () => {
-				console.info('Connection to MongoDB is opened.');
+				this.logger.info('Connection to MongoDB is opened.');
 			});
 
 			this.connection.on('connected', () => {
-				console.info('Mongoose default connection is connected.');
+				this.logger.info('Mongoose default connection is connected.');
 				resolve();
 			});
 
 			this.connection.on('error', msg => {
-				console.error(`Mongoose default connection error: ${msg}`);
+				this.logger.error(`Mongoose default connection error: ${msg}`);
 				reject(new Error(msg));
 			});
 
 			this.connection.on('disconnected', () => {
-				console.info('Mongoose default connection is disconnected.');
+				this.logger.info('Mongoose default connection is disconnected.');
 				setTimeout(async () => {
 					this.mongooseInstance = await setUpMongooseInstance();
 				}, this.RECONNECT_INTERVAL);
 			});
 
 			this.connection.on('reconnected', () => {
-				console.info('Mongoose default connection is reconnected.');
+				this.logger.info('Mongoose default connection is reconnected.');
 			});
 
-			console.info('Connecting to MongoDB');
+			this.logger.info('Connecting to MongoDB');
 			this.mongooseInstance = await setUpMongooseInstance();
 		});
 	}

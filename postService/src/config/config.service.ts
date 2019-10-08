@@ -11,7 +11,7 @@ export class ConfigService {
 	public constructor(filePath: string);
 	public constructor(configObject: { [key: string]: string | undefined });
 	public constructor(obj?: string | { [key: string]: string | undefined }) {
-		
+
 		switch (typeof obj) {
 
 			case "string": {
