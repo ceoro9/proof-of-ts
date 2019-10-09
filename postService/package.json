@@ -29,6 +29,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3",
+    "ts.data.json": "^0.3.0",
     "typegoose": "^5.9.1",
     "winston": "^3.2.1"
   },
