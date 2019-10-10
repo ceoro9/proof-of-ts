@@ -10,7 +10,7 @@ export class WinstonLoggerService {
 			format: winston.format.json(),
 			defaultMeta: this.getMetadata(),
 			transports: this.getTransports(),
-		};
+		};	
 	}
 
 	private getTransports() {

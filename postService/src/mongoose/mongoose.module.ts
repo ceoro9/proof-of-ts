@@ -5,7 +5,7 @@ import { LoggerModule }    from '../logger/logger.module';
 
 @Module({
 	imports: [
-		ConfigModule.register(),
+		ConfigModule.register('/home/ceoro9/ts_practive/proof-of-ts/postService/env-vars.env'),
 		LoggerModule,
 	],
 	providers: [MongooseService],

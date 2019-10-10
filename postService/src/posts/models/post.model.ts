@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';	
 import { Typegoose, prop, InstanceType } from 'typegoose';
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
-import { UserService } from 'src/users/users.service';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { UserService } from '../../users/users.service';
 
 export class Post extends Typegoose {
 
@@ -34,13 +34,13 @@ const BasePostModel: mongoose.Model<InstanceType<Post>> = new Post().getModelFor
 export class PostModel extends BasePostModel {
 
 	@Inject()
-	private userService?: UserService; // TODO: may be use constuctor injection
+	private userService!: UserService; // TODO: may be use constuctor injection
 
 	public async validate() {
 		super.validate();
 		if (this.userId && this.userService) {
 			if (!this.userService.doesUserExist(this.userId.toHexString())) {
-				throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+				throw new NotFoundException('User does not exist');
 			}
 		} else {
 			throw new Error('userId or userService is undefined');
