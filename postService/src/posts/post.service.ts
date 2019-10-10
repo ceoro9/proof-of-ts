@@ -3,6 +3,7 @@ import { Typegoose, ModelType } from 'typegoose';
 import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { IPostService } from './posts.interface';
 import { PostModel } from './models/post.model';
+import { UserService } from '../users/users.service';
 
 export abstract class BaseService<T extends Typegoose> {
 
@@ -29,7 +30,7 @@ export abstract class BaseService<T extends Typegoose> {
 @Injectable()
 export class PostService extends BaseService<PostModel> implements IPostService {
 
-	public constructor(@Inject(PostModel) protected model: ModelType<PostModel>) {
+	public constructor(@Inject(PostModel) protected model: ModelType<PostModel>, private userService: UserService) {
 		super();
 	}
 
@@ -49,8 +50,9 @@ export class PostService extends BaseService<PostModel> implements IPostService 
 
 	}
 
-	public getUserPostsByUserId(userId: mongoose.Types.ObjectId) {
-
+	public async getUserPostsByUserId(userId: mongoose.Types.ObjectId) {
+		await this.userService.getUserById(userId.toHexString());
+		return this.find({ userId });
 	}
 
 }

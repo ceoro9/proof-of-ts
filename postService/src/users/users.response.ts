@@ -1,11 +1,13 @@
+import { Response } from 'node-fetch';
+import { HttpException } from '@nestjs/common';
 import { JsonDecoder, Ok } from 'ts.data.json';
 
 export interface ErrorResponse<T> {
 	error: {
-		code:     number;
-		name?:    string;
-		message:  string;
-		errors:   T[];
+		code:      number;
+		name?:     string;
+		message:   string;
+		errors?:   T[];
 	}
 }
 
@@ -42,22 +44,26 @@ const userServiceErrorDecoder = createTypedDecoder<ErrorResponse<any>>({
 		code:    JsonDecoder.number,
 		message: JsonDecoder.string,
 		name:    JsonDecoder.optional(JsonDecoder.string),
-		errors:  JsonDecoder.array(JsonDecoder.string, 'ErrorServiceSpecificErrorDecoder'),
+		errors:  JsonDecoder.optional(JsonDecoder.array(JsonDecoder.string, 'ErrorServiceSpecificErrorDecoder')),
 	}, 'UserServiceErrorDecoder')
 });
 
 
 function decodeUserServiceResponse(jsonData: string) {
-	const successResponse = userServiceSuccessDecoder.decode(jsonData);
-	const errorResponse   = userServiceErrorDecoder.decode(jsonData);
 
-	if (successResponse instanceof Ok) {
-		return successResponse.value;
-	}
-
-	if (errorResponse instanceof Ok) {
-		return errorResponse.value;
-	}
+	try {
+		const successResponse = userServiceSuccessDecoder.decode(jsonData);
+		if (successResponse instanceof Ok) {
+			return successResponse.value;
+		}
+	} catch(e) {}
+	
+	try {
+		const errorResponse = userServiceErrorDecoder.decode(jsonData);
+		if (errorResponse instanceof Ok) {
+			return errorResponse.value;
+		}
+	} catch(e) {}
 
 	throw new Error('Invalid json data');
 } 
@@ -68,7 +74,7 @@ export type UserServiceResponseType = SuccessResponse<UserDetailedResponse> | Us
 
 export class UserServiceResponse {
 
-	private readonly status: number;
+	private readonly status:     number;
 	private readonly rawBody:    string;
 	private readonly result:     UserServiceResponseType;
 
@@ -78,22 +84,39 @@ export class UserServiceResponse {
 		this.result  = decodeUserServiceResponse(body);
 	}
 
-	public static async createFromHttpResponse(response: { status: number, json: () => Promise<any> }) {
+	public static async createFromHttpResponse(response: Response) {
 		const status = response.status;
 		const body   = await response.json();
 		return new UserServiceResponse(body, status);
 	}
 
 	public static isSuccess(response: any): response is UserSuccessResponseType {
-		// TODO: check param type
-		// TODO: may be check status code
-		return (response.result as UserSuccessResponseType).data !== undefined;
+		if (response instanceof UserServiceResponse) {
+			return response.getStatus() <= 400;
+		}
+		return false;
 	}
 
 	public static isError(response: any): response is UserErrorResponseType {
-		// TODO: check param type
-		// TODO: may be check status code
-		return (response.result as UserErrorResponseType).error !== undefined;
+		return !UserServiceResponse.isSuccess(response);
+	}
+
+	/**
+	 * If request was successfull -> returns data.
+	 * If request has failed -> throw http exception.
+	 */
+	public toHttpException() {
+		const result = this.getResult();
+
+		if (UserServiceResponse.isError(result)) {
+			const errorMessage = result.error.message;
+			const statusCode   = result.error.code;
+			throw new HttpException(errorMessage, statusCode);
+		}
+
+		if (UserServiceResponse.isSuccess(result)) {
+			throw new Error('No http exception for success response');
+		}
 	}
 
 	public getStatus() {

@@ -25,9 +25,7 @@ export class PostsController {
 	@Get('by-user/:userId')
 	@UsePipes(new MongooseObjectIdValidationPipe())
 	public getUserPostsByUserId(@Param('userId') userId: Types.ObjectId) {
-		console.log(userId);
-		// return this.postService.getUserPostsByUserId(userId);
-		return 'getUserPostsByUserId';
+		return this.postService.getUserPostsByUserId(userId);
 	}
 
 }

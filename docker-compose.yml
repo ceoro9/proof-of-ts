@@ -13,12 +13,34 @@ services:
       - user_rabbit:queue
     networks: 
       - backend
+
+  # post_service:
+  #   build: ./postService
+  #   container_name: post_service
+  #   ports:
+  #     - "8000:8002"
+  #   env_file:
+  #     - ./postService/env-vars.env
+  #   links:
+  #     - post_mongo:database
+  #   networks:
+  #     - backend
+  
+  post_mongo:
+    image: mongo:latest
+    container_name: post_mongo
+    ports:
+      - "5002:27017"
+    volumes:
+      - ./postService/data:/data/db
+    networks: 
+      - backend
   
   user_mongo:
     image: mongo:latest
     container_name: user_mongo
     ports:
-      - "27017:27017"
+      - "5001:27017"
     volumes:
       - ./userService/data:/data/db
     networks: 
