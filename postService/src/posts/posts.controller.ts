@@ -3,7 +3,6 @@ import { Controller, Get, Post, Param, UsePipes } from '@nestjs/common';
 import { IPostService } from './posts.interface';
 import { MongooseObjectIdValidationPipe } from './posts.pipes';
 
-
 @Controller('posts')
 export class PostsController {
 

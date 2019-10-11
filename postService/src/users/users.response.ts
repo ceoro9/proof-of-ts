@@ -65,7 +65,7 @@ function decodeUserServiceResponse(jsonData: string) {
 		}
 	} catch(e) {}
 
-	throw new Error('Invalid json data');
+	throw new Error('Unknown json data format');
 } 
 
 export type UserSuccessResponseType = SuccessResponse<UserDetailedResponse>;
@@ -111,7 +111,7 @@ export class UserServiceResponse {
 		if (UserServiceResponse.isError(result)) {
 			const errorMessage = result.error.message;
 			const statusCode   = result.error.code;
-			throw new HttpException(errorMessage, statusCode);
+			return new HttpException(errorMessage, statusCode);
 		}
 
 		if (UserServiceResponse.isSuccess(result)) {
