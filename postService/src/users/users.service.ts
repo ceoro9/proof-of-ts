@@ -30,7 +30,7 @@ export class UserService {
 
 	public async doesUserExist(userId: string) {
 		try {
-			this.getUserById(userId);
+			await this.getUserById(userId);
 			return true;
 		} catch (e) {
 			return false;

@@ -1,10 +1,11 @@
-import { Module, Provider } from '@nestjs/common';
-import { ValueProvider }    from '@nestjs/common/interfaces';
-import { PostService }      from './post.service';
-import { IPostService }     from './posts.interface';
-import { PostsController }  from './posts.controller';
-import { PostModel }        from './models/post.model';
-import { UsersModule }      from '../users/users.module'; 
+import { Module, Provider }            from '@nestjs/common';
+import { ValueProvider }               from '@nestjs/common/interfaces';
+import { PostService }                 from './post.service';
+import { IPostService }                from './posts.interface';
+import { PostsController }             from './posts.controller';
+import { PostModel }                   from './models/post.model';
+import { UsersModule }                 from '../users/users.module'; 
+import { DoesUserWithProvidedIdExist } from './create-post.dto';
  
 const postServiceProvider: Provider<PostService> = {
 	provide:  IPostService,
@@ -18,7 +19,11 @@ const postModelProvider: ValueProvider<typeof PostModel> = {
 
 @Module({
 	imports:     [UsersModule],
-	providers:   [postServiceProvider, postModelProvider],
+	providers:   [
+		postServiceProvider,
+		postModelProvider,
+		DoesUserWithProvidedIdExist,
+	],
 	exports:     [postServiceProvider, postModelProvider],
 	controllers: [PostsController],
 })
