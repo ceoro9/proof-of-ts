@@ -1,16 +1,16 @@
 import mongoose from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Injectable }  from '@nestjs/common';
+import { UserService } from '../users/users.service';
 import {
 	ValidatorConstraint,
 	ValidatorConstraintInterface,
 	ValidationArguments,
 } from 'class-validator';
-import { UserService } from '../users/users.service';
 
 @ValidatorConstraint({ async: false })
 export class MongooseObjectId implements ValidatorConstraintInterface {
 
-	public validate(objectId: string, args: ValidationArguments) {
+	public validate(objectId: string, _args: ValidationArguments) {
 		return mongoose.Types.ObjectId.isValid(objectId);
 	}
 

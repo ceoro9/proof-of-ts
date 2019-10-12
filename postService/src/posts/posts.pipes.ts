@@ -5,52 +5,65 @@ import {
 	Injectable,
 	BadRequestException,
 } from '@nestjs/common';
-import { BaseDTO } from './create-post.dto';
-import { validate } from 'class-validator';
+import { validate }     from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { BaseDTO }      from './create-post.dto';
 
 /**
- * This pipe transforms string object id into
+ * Checks if B is sub-class of A
+ */
+function isSubClass(B: any) {
+	return (A: any) => B.prototype instanceof A || B === A;
+}
+
+/**
+ * This pipe transforms string object id from request params into
  * mongoose.Types.ObjectId and throws BadRequestException
  * if string object id has invalid format.
  */
 @Injectable()
-export class MongooseObjectIdValidationPipe implements PipeTransform<string, mongoose.Types.ObjectId> {
+export class MongooseObjectIdParamValidationPipe implements PipeTransform<string, mongoose.Types.ObjectId> {
 
-	public transform(resourceId: string, _metadata: ArgumentMetadata) {
-		if (!mongoose.Types.ObjectId.isValid(resourceId)) {
-			throw new BadRequestException('Validation failed. Invalid id format');
+	public transform(objectId: any, { metatype, type }: ArgumentMetadata) {
+
+		if (type === 'param' && metatype && isSubClass(metatype)(mongoose.Types.ObjectId)) {
+
+			if (!mongoose.Types.ObjectId.isValid(objectId)) {
+				throw new BadRequestException('Validation failed. Invalid id format');
+			}
+			
+			return mongoose.Types.ObjectId(objectId);;
 		}
-		return mongoose.Types.ObjectId(resourceId);;
+
+		return objectId;
 	}
 
 }
 
-export class DTOValidadtionPipe implements PipeTransform {
+/**
+ * This pipe transforms arbitrary object from request body into
+ * DTO class instance and makes its validation. In case validation
+ * has failed, it throws ValidationException. To make transformation
+ * work your dto class should be sub-class of BaseDTO class.
+ */
+export class DTOBodyValidadtionPipe implements PipeTransform {
 	
-	public async transform(value: any, { metatype }: ArgumentMetadata) {
+	public async transform(value: any, { metatype, type }: ArgumentMetadata) {
 
-		console.log(value, 'sssss');
-
-		if (!metatype || !this.toValidate(value)) {
-			return value;
-		}
-
-		console.log('ooo');
+		if (type === 'body' && metatype && isSubClass(metatype)(BaseDTO)) {
+			
+			const object = plainToClass(metatype, value);
+			const errors = await validate(object);
 		
-		const object = plainToClass(metatype, value);
-		const errors = await validate(object);
-		// TODO: prettiy error-response
-		if (errors.length) {
-			throw new BadRequestException('Validation faied');
+			// TODO: prettiy error-response
+			if (errors.length) {
+				throw new BadRequestException('Validation faied');
+			}
+
+			return object;
 		}
 
-		return object;
+		return value;
 	}
-
-	private toValidate(metatype: Function): boolean {
-    const types: Function[] = [String, Boolean, Number, Array, Object];
-    return !types.includes(metatype);
-  }
 
 }

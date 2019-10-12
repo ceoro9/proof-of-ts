@@ -1,8 +1,9 @@
-import { Types } from 'mongoose';
-import { Controller, Get, Post, Param, UsePipes, Body } from '@nestjs/common';
-import { IPostService } from './posts.interface';
-import { MongooseObjectIdValidationPipe, DTOValidadtionPipe } from './posts.pipes';
+import mongoose from 'mongoose';
+import { Controller, Get, Post, Param, UsePipes, Body, Patch, Delete } from '@nestjs/common';
+import { MongooseObjectIdParamValidationPipe, DTOBodyValidadtionPipe } from './posts.pipes';
+import { IPostService }  from './posts.interface';
 import { CreatePostDTO } from './create-post.dto';
+import { UpdatePostDTO } from './update-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -10,21 +11,33 @@ export class PostsController {
 	public constructor(private postService: IPostService) {}
 
 	@Post()
-	@UsePipes(new DTOValidadtionPipe())
+	@UsePipes(new DTOBodyValidadtionPipe())
 	public createUserPost(@Body() createPostDTO: CreatePostDTO) {
 		return this.postService.createPost(createPostDTO);
 	}
 
 	@Get(':postId')
-	@UsePipes(new MongooseObjectIdValidationPipe())
-	public getPostById(@Param('postId') postId: Types.ObjectId) {
+	@UsePipes(new MongooseObjectIdParamValidationPipe())
+	public getPostById(@Param('postId') postId: mongoose.Types.ObjectId) {
 		return this.postService.getPostById(postId);
 	}
 
 	@Get('by-user/:userId')
-	@UsePipes(new MongooseObjectIdValidationPipe())
-	public getUserPostsByUserId(@Param('userId') userId: Types.ObjectId) {
+	@UsePipes(new MongooseObjectIdParamValidationPipe())
+	public getUserPostsByUserId(@Param('userId') userId: mongoose.Types.ObjectId) {
 		return this.postService.getUserPostsByUserId(userId);
+	}
+
+	@Patch(':postId')
+	@UsePipes(new MongooseObjectIdParamValidationPipe(), new DTOBodyValidadtionPipe())
+	public patchPostById(@Param('postId') postId: mongoose.Types.ObjectId, @Body() updatePostDTO: UpdatePostDTO) {
+		return this.postService.updatePostById(postId, updatePostDTO);
+	}
+
+	@Delete(':postId')
+	@UsePipes(new MongooseObjectIdParamValidationPipe())
+	public deletePostById(@Param('postId') postId: mongoose.Types.ObjectId) {
+		return this.postService.deletePostById(postId);
 	}
 
 }
