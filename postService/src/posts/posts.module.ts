@@ -1,11 +1,11 @@
 import { Module, Provider }            from '@nestjs/common';
 import { ValueProvider }               from '@nestjs/common/interfaces';
-import { PostService }                 from './post.service';
+import { PostService }                 from './posts.service';
 import { IPostService }                from './posts.interface';
 import { PostsController }             from './posts.controller';
 import { PostModel }                   from './models/post.model';
 import { UsersModule }                 from '../users/users.module'; 
-import { DoesUserWithProvidedIdExist } from './create-post.dto';
+import { DoesUserWithProvidedIdExist } from './posts.validators';
  
 const postServiceProvider: Provider<PostService> = {
 	provide:  IPostService,

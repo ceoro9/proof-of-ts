@@ -43,11 +43,11 @@ export class PostService extends BaseService<PostModel> implements IPostService 
 	}
 
 	public updatePostById(postId: mongoose.Types.ObjectId) {
-
+		// TODO:
 	}
 
 	public deletePostById(postId: mongoose.Types.ObjectId) {
-
+		// TODO:
 	}
 
 	public async getUserPostsByUserId(userId: mongoose.Types.ObjectId) {
