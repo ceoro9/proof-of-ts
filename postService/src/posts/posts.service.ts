@@ -1,13 +1,15 @@
 import mongoose from 'mongoose';
 import { Typegoose, ModelType } from 'typegoose';
 import { Injectable, NotFoundException, Inject } from '@nestjs/common';
-import { IPostService }  from './posts.interface';
+import { IPostService, IPostServiceSafe }        from './posts.interface';
 import { PostModel }     from './post.model';
 import { UserService }   from '../users/users.service';
 import { UpdatePostDTO } from './update-post.dto';
 import { CreatePostDTO } from './create-post.dto';
 
 export abstract class BaseService<T extends Typegoose> {
+
+	public constructor() {}
 
 	protected abstract model: ModelType<T>;
 
@@ -88,3 +90,66 @@ export class PostService extends BaseService<PostModel> implements IPostService 
 	}
 
 }
+
+@Injectable()
+export class PostServiceSafe extends PostService implements IPostServiceSafe {}
+
+/**
+ * Intercepts all method calls and tries to catch
+ * NotFoundException to return null instead of it. If
+ * there is another type of exception - rethrows it.
+ */
+const postServiceSafeProxyHandler = {
+
+	get(target: any, propKey: string, _receiver: any) {
+
+		const originProperty = target[propKey];
+
+		if (typeof originProperty === "function") {
+
+			return function(this: unknown, ...args: unknown[]) {
+				
+				try {
+					const result = originProperty.apply(this, args);
+					
+					// handle case, when result is a promise
+					if (result instanceof Promise) {
+						return new Promise(async (resolve) => {
+							try {
+								const promiseResult = await result;
+								resolve(promiseResult);
+							} catch (e) {
+								if (e instanceof NotFoundException) {
+									resolve(null);
+									return;
+								}
+								throw e; // rejected
+							}
+						});
+					}
+
+					return result;
+
+				} catch (e) {
+					if (e instanceof NotFoundException) {
+						return null;
+					}
+					throw e;
+				}
+			}
+		}
+
+		return originProperty;
+	}
+
+};
+
+// Set proxy object on class prototype, so all method-calls
+// on its instances will be intercepted by proxy object.
+Object.setPrototypeOf(
+	PostServiceSafe.prototype,
+	new Proxy(
+		Object.getPrototypeOf(PostServiceSafe.prototype), 
+		postServiceSafeProxyHandler
+	)
+);
