@@ -3,7 +3,7 @@ import { ValueProvider }               from '@nestjs/common/interfaces';
 import { PostService }                 from './posts.service';
 import { IPostService }                from './posts.interface';
 import { PostsController }             from './posts.controller';
-import { PostModel }                   from './models/post.model';
+import { PostModel }                   from './post.model';
 import { UsersModule }                 from '../users/users.module'; 
 import { DoesUserWithProvidedIdExist } from './posts.validators';
  

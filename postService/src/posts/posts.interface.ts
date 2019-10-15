@@ -1,6 +1,6 @@
 import { Types }         from 'mongoose';
 import { InstanceType }  from 'typegoose';
-import { PostModel }     from './models/post.model';
+import { PostModel }     from './post.model';
 import { CreatePostDTO } from './create-post.dto';
 import { UpdatePostDTO } from './update-post.dto';
 

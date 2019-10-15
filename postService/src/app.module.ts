@@ -4,6 +4,7 @@ import { AppService }     from './app.service';
 import { ConfigModule }   from './config/config.module';
 import { PostsModule }    from './posts/posts.module';
 import { MongooseModule } from './mongoose/mongoose.module';
+import { PostTagsModule } from './post-tags/post-tags.module';
 import { UsersModule }    from './users/users.module';
 import { LoggerModule }   from './logger/logger.module';
 
@@ -14,6 +15,7 @@ import { LoggerModule }   from './logger/logger.module';
 		PostsModule,
 		LoggerModule,
 		UsersModule,
+		PostTagsModule,
 	],
   controllers: [AppController],
   providers: [AppService],

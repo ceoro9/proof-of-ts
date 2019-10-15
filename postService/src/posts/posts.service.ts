@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Typegoose, ModelType } from 'typegoose';
 import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { IPostService }  from './posts.interface';
-import { PostModel }     from './models/post.model';
+import { PostModel }     from './post.model';
 import { UserService }   from '../users/users.service';
 import { UpdatePostDTO } from './update-post.dto';
 import { CreatePostDTO } from './create-post.dto';
