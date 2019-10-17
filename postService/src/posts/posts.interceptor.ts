@@ -1,4 +1,4 @@
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { MongooseSessionService } from '../mongoose/session.service';
 import { Observable } from 'rxjs';
@@ -12,11 +12,12 @@ export class CloseMongooseSessionInterceptor implements NestInterceptor {
 		console.log('aaaaaaa');
 		return next.handle().pipe(
 			// Success -> commit session
-			tap(() => {
+			map((result: Observable<any>) => {
 				const session = this.mongooseSessionService.getSession();
 				if (session) {
 					session.commitTransaction();
 				}
+				return result;
 			},
 			// Failure -> abort session
 			catchError((err: any, _caugth: Observable<any>) => {

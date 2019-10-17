@@ -19,7 +19,6 @@ export class MongooseSessionService {
 	public constructor(private logger: ILogger,
 										 private configService: ConfigService,
 										 private mongooseService: MongooseService) {
-		console.log("INIT SESSION");
 		this.session = void 0;
 		this.setUpSession();
 	}
@@ -33,6 +32,8 @@ export class MongooseSessionService {
 			this.sessionPromise = connection.startSession();
 			this.session = await this.sessionPromise;
 			this.logger.info('Mongoose session is ready to use');
+			this.session.startTransaction();
+			this.logger.info('Mongoose session just started transaction');
 		}
 	}
 
