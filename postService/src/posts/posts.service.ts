@@ -1,20 +1,53 @@
-import mongoose from 'mongoose';
-import { Typegoose, ModelType } from 'typegoose';
-import { Injectable, NotFoundException, Inject } from '@nestjs/common';
-import { IPostService, IPostServiceSafe }        from './posts.interface';
-import { PostModel }     from './post.model';
-import { UserService }   from '../users/users.service';
-import { UpdatePostDTO } from './update-post.dto';
-import { CreatePostDTO } from './create-post.dto';
+import mongoose, { DocumentQuery, ClientSession } from 'mongoose';
+import { Typegoose, ModelType }                   from 'typegoose';
+import { Injectable, NotFoundException, Inject }  from '@nestjs/common';
+import { IPostService, IPostServiceSafe }         from './posts.interface';
+import { PostModel }              from './post.model';
+import { UserService }            from '../users/users.service';
+import { UpdatePostDTO }          from './update-post.dto';
+import { CreatePostDTO }          from './create-post.dto';
+import { MongooseSessionService } from '../mongoose/session.service';
 
+@Injectable()
 export abstract class BaseService<T extends Typegoose> {
-
-	public constructor() {}
 
 	protected abstract model: ModelType<T>;
 
-	public create(props: any) {
-		return this.model.create(props);
+	public constructor() {
+
+		const self = this;
+		const defaultPrototype = Object.getPrototypeOf(this);
+
+		Object.setPrototypeOf(this, new Proxy(defaultPrototype, {
+
+			get(target: any, propKey: string, _receiver: any) {
+
+				const originProperty = target[propKey];
+		
+				if (typeof originProperty === "function") {
+		
+					return function(this: unknown, ...args: unknown[]) {
+						
+						const result = originProperty.apply(this, args);
+
+						console.log(propKey, typeof result, DocumentQuery);
+		
+						if (result && typeof result.session === 'function') {
+							console.log('hoooooo');
+							return result.session(self.getSession());
+						}
+		
+						return result;
+					};
+				}
+			}
+		}));
+	}
+
+	public abstract getSession(): ClientSession | null;
+
+	public create<T>(props: T extends Array<any> ? never : T) {
+		return this.model.create([props], { session: this.getSession() });
 	}
 
 	public find(filters: any) {
@@ -22,7 +55,7 @@ export abstract class BaseService<T extends Typegoose> {
 	}
 
 	public async findById(id: mongoose.Types.ObjectId) {
-		const document = await this.model.findById(id).exec();
+		const document = await this.model.findById(id);
 		if (!document) {
 			throw this.getNotFoundException();
 		}
@@ -64,8 +97,15 @@ export abstract class BaseService<T extends Typegoose> {
 @Injectable()
 export class PostService extends BaseService<PostModel> implements IPostService {
 
-	public constructor(@Inject(PostModel) protected model: ModelType<PostModel>, private userService: UserService) {
+	public constructor(@Inject(PostModel) protected model: ModelType<PostModel>,
+										 private readonly userService: UserService,
+										 private readonly mongooseSessionService: MongooseSessionService) {
 		super();
+	}
+
+	public getSession() {
+		const session = this.mongooseSessionService.getSession();
+		return session ? session : null;
 	}
 
 	public createPost(postData: CreatePostDTO) {

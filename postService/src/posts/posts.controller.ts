@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
-import { Controller, Get, Post, Param, UsePipes, Body, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, UsePipes, Body, Patch, Delete, UseInterceptors } from '@nestjs/common';
 import { MongooseObjectIdParamValidationPipe, DTOBodyValidadtionPipe } from './posts.pipes';
+import { CloseMongooseSessionInterceptor } from './posts.interceptor';
 import { IPostService }  from './posts.interface';
 import { CreatePostDTO } from './create-post.dto';
 import { UpdatePostDTO } from './update-post.dto';
 
 @Controller('posts')
+@UseInterceptors(CloseMongooseSessionInterceptor)
 export class PostsController {
 
 	public constructor(private postService: IPostService) {}
