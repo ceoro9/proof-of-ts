@@ -23,6 +23,10 @@ export interface IPostService {
 	
 	getUserPostsByUserId(userId: Types.ObjectId): PromisedPostInstances;
 
+	updatePostTags(postId: Types.ObjectId, tags: Array<string>): PromisedPostInstance;
+
+	removePostTags(postId: Types.ObjectId): PromisedPostInstance;
+
 }
 
 export abstract class IPostService implements IPostService {}

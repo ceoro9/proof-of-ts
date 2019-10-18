@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';	
 import { Typegoose, prop, InstanceType, Ref } from 'typegoose';
 import { Injectable } from '@nestjs/common';
-import { Post }       from 'src/posts/post.model';
+import { Post }       from '../posts/post.model';
 
 export class PostTag extends Typegoose {
 
@@ -27,4 +27,5 @@ export const BasePostTagModel: mongoose.Model<InstanceType<PostTag>> = new PostT
 	},
 });
 
+@Injectable()
 export class PostTagModel extends BasePostTagModel {}

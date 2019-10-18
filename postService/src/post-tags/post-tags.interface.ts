@@ -27,3 +27,5 @@ export interface IPostTagsService {
 	deleteAllPostTagsByPostId(postId: Types.ObjectId): Promise<number>;
 
 }
+
+export abstract class IPostTagsService implements IPostTagsService {}

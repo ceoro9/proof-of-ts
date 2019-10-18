@@ -9,20 +9,25 @@ import { IPostService }                         from '../posts/posts.interface';
 
 @Controller('post-tags')
 @UseInterceptors(CloseMongooseSessionInterceptor)
-export class PostsController {
+export class PostTagsController {
 
 	public constructor(private readonly postTagsService: IPostTagsService,
 										 private readonly postService: IPostService) {}
 
 	@Post()
 	@UsePipes(new DTOBodyValidadtionPipe())
-	public createPostTags(@Body() createPostTagsDTO: CreatePostTagsDTO) {
-		return this.postTagsService.createPostTags(createPostTagsDTO);
+	public async createPostTags(@Body() createPostTagsDTO: CreatePostTagsDTO) {
+		// TODO: add validation that post does not yet have any tags
+		const { post, tags } = createPostTagsDTO;
+		await this.postTagsService.createPostTags(createPostTagsDTO);
+		return this.postService.updatePostTags(new mongoose.Types.ObjectId(post), tags);
 	}
 
 	@Put()
 	@UsePipes(new DTOBodyValidadtionPipe())
-	public updatePostTags(@Body() updatePostTagsDTO: UpdatePostTagsDTO) {
+	public async updatePostTags(@Body() updatePostTagsDTO: UpdatePostTagsDTO) {
+		const { post, tags } = updatePostTagsDTO;
+		await this.postService.updatePostTags(new mongoose.Types.ObjectId(post), tags);
 		return this.postTagsService.updatePostTags(updatePostTagsDTO);
 	}
 
@@ -34,7 +39,9 @@ export class PostsController {
 
 	@Delete(':postTagId')
 	@UsePipes(new MongooseObjectIdParamValidationPipe())
-	public deletePostTagById(@Param('postTagId') postTagId: mongoose.Types.ObjectId) {
+	public async deletePostTagById(@Param('postTagId') postTagId: mongoose.Types.ObjectId) {
+		// TODO: implement removing from post model
+		// const postTag = await this.postTagsService.getPostTagById(postTagId);
 		return this.postTagsService.deletePostTagById(postTagId);
 	}
 
@@ -46,7 +53,8 @@ export class PostsController {
 
 	@Delete('by-post/:postId')
 	@UsePipes(new MongooseObjectIdParamValidationPipe())
-	public deletePostTagsByPostId(@Param('postId') postId: mongoose.Types.ObjectId) {
+	public async deletePostTagsByPostId(@Param('postId') postId: mongoose.Types.ObjectId) {
+		await this.postService.removePostTags(postId);
 		return this.postTagsService.deleteAllPostTagsByPostId(postId);
 	}
 
