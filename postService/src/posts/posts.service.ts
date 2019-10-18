@@ -139,6 +139,14 @@ export class PostService extends BaseService<PostModel> implements IPostService 
 		return this.find({ userId });
 	}
 
+	public updatePostTags(postId: mongoose.Types.ObjectId, tags: Array<string>) {
+		return this.findOneAndUpdate({ _id: postId }, { tags });
+	}
+
+	public removePostTags(postId: mongoose.Types.ObjectId) {
+		return this.updatePostTags(postId, []);
+	}
+
 }
 
 @Injectable()

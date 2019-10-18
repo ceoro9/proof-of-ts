@@ -1,8 +1,6 @@
-import mongoose, { SaveOptions } from 'mongoose';	
-import { Injectable, Inject } from '@nestjs/common';
-import { Typegoose, prop, InstanceType } from 'typegoose';
-import { MongooseSessionService } from '../mongoose/session.service';
-import { MongooseService } from 'src/mongoose/mongoose.service';
+import mongoose from 'mongoose';	
+import { Injectable }                               from '@nestjs/common';
+import { Typegoose, prop, InstanceType, arrayProp } from 'typegoose';
 
 export class Post extends Typegoose {
 
@@ -16,6 +14,9 @@ export class Post extends Typegoose {
 
 	@prop({ required: true })
 	text?: string;
+
+	@arrayProp({ items: String })
+	tags?: Array<string>;
 
 	@prop()
 	get id() {
@@ -31,35 +32,5 @@ export const BasePostModel: mongoose.Model<InstanceType<Post>> = new Post().getM
 	},
 });
 
-export class PostModel extends BasePostModel {
-
-	public save(options?: SaveOptions, fn?: (err: any, product: this) => void): Promise<this>;
-	public save(fn?: (err: any, product: this) => void): Promise<this>;
-	public save(arg?: any, fn?: any): Promise<this> {
-		console.log('ssssavveee')
-		return super.save(arg, fn);
-		
-		// if (arg && typeof arg === 'function') {
-		// 	return super.save(arg);
-		// }
-
-		// const options = arg as SaveOptions;
-		// const session = this.mongooseSessionService.getSession();
-
-		// if (!options.session) {
-		// 	options.session = session;
-		// }
-
-		// const result = super.save(options, fn);
-
-		// if (session) {
-		// 	session.commitTransaction();
-		// }
-
-		// return result;
-	}
-
-
-}
-
-
+@Injectable()
+export class PostModel extends BasePostModel {}
