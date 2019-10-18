@@ -1,20 +1,22 @@
-import { tap, catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { MongooseSessionService } from '../mongoose/session.service';
-import { Observable } from 'rxjs';
+import { ILogger } from '../logger';
 
 @Injectable()
 export class CloseMongooseSessionInterceptor implements NestInterceptor {
 
-	public constructor(private readonly mongooseSessionService: MongooseSessionService) {}
+	public constructor(private readonly logger: ILogger,
+									   private readonly mongooseSessionService: MongooseSessionService) {}
 	
 	public async intercept(_context: ExecutionContext, next: CallHandler) {
-		console.log('aaaaaaa');
 		return next.handle().pipe(
 			// Success -> commit session
 			map((result: Observable<any>) => {
 				const session = this.mongooseSessionService.getSession();
 				if (session) {
+					this.logger.info('Committing transaction');
 					session.commitTransaction();
 				}
 				return result;
@@ -23,6 +25,7 @@ export class CloseMongooseSessionInterceptor implements NestInterceptor {
 			catchError((err: any, _caugth: Observable<any>) => {
 				const session = this.mongooseSessionService.getSession();
 				if (session) {
+					this.logger.info('Aborting transaction');
 					session.abortTransaction();
 				}
 				throw err;

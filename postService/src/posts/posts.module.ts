@@ -8,6 +8,7 @@ import { UsersModule }                     from '../users/users.module';
 import { DoesUserWithProvidedIdExist }     from './posts.validators';
 import { MongooseModule }                  from '../mongoose/mongoose.module';
 import { CloseMongooseSessionInterceptor } from './posts.interceptor';
+import { LoggerModule }                    from '../logger';
  
 const postServiceProvider: Provider<PostService> = {
 	provide:  IPostService,
@@ -28,6 +29,7 @@ const postModelProvider: ValueProvider<typeof PostModel> = {
 	imports: [
 		UsersModule,
 		MongooseModule,
+		LoggerModule,
 	],
 	providers: [
 		postServiceProvider,

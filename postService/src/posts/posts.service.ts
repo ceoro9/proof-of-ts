@@ -1,4 +1,4 @@
-import mongoose, { DocumentQuery, ClientSession } from 'mongoose';
+import mongoose, { DocumentQuery, ClientSession, Query } from 'mongoose';
 import { Typegoose, ModelType }                   from 'typegoose';
 import { Injectable, NotFoundException, Inject }  from '@nestjs/common';
 import { IPostService, IPostServiceSafe }         from './posts.interface';
@@ -11,37 +11,39 @@ import { MongooseSessionService } from '../mongoose/session.service';
 @Injectable()
 export abstract class BaseService<T extends Typegoose> {
 
-	protected abstract model: ModelType<T>;
+	protected model: ModelType<T>;
 
-	public constructor() {
+	public constructor(model: ModelType<T>) {
 
 		const self = this;
-		const defaultPrototype = Object.getPrototypeOf(this);
 
-		Object.setPrototypeOf(this, new Proxy(defaultPrototype, {
+		this.model = new Proxy(model, {
 
-			get(target: any, propKey: string, _receiver: any) {
+			// intercept constructing of model
+			// construct(target: ModelType<T>, args: unknown[]) {
+			// 	const result = new target(...args);
+			// 	console.log(`RESULT = ${result} ${args} --- ${target}`);
+			// 	return result;
+			// },
 
-				const originProperty = target[propKey];
-		
+			get(target: ModelType<T> & { [key: string]: any }, propKey: string, receiver: any) {
+
+				const originProperty = Reflect.get(target, propKey, receiver);
+
 				if (typeof originProperty === "function") {
-		
-					return function(this: unknown, ...args: unknown[]) {
-						
-						const result = originProperty.apply(this, args);
 
-						console.log(propKey, typeof result, DocumentQuery);
-		
-						if (result && typeof result.session === 'function') {
-							console.log('hoooooo');
-							return result.session(self.getSession());
+					return function(...args: unknown[]) {
+						const result = Reflect.apply(originProperty, target, args);
+						if (result instanceof Query) {
+							result.session(self.getSession());
 						}
-		
 						return result;
-					};
+					}
 				}
+
+				return originProperty;
 			}
-		}));
+		});
 	}
 
 	public abstract getSession(): ClientSession | null;
@@ -97,10 +99,10 @@ export abstract class BaseService<T extends Typegoose> {
 @Injectable()
 export class PostService extends BaseService<PostModel> implements IPostService {
 
-	public constructor(@Inject(PostModel) protected model: ModelType<PostModel>,
+	public constructor(@Inject(PostModel) model: ModelType<PostModel>,
 										 private readonly userService: UserService,
 										 private readonly mongooseSessionService: MongooseSessionService) {
-		super();
+		super(model);
 	}
 
 	public getSession() {
