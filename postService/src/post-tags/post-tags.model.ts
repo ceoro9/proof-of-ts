@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';	
 import { Typegoose, prop, InstanceType, Ref } from 'typegoose';
-import { Injectable } from '@nestjs/common';
-import { Post }       from '../posts/post.model';
+import { Injectable, NotFoundException }      from '@nestjs/common';
+import { PostModel } from '../posts/post.model';
 
 export class PostTag extends Typegoose {
 
 	public _id!: mongoose.Types.ObjectId;
 
-	@prop({ ref: Post })
-	post!: Ref<Post>;
+	@prop({ ref: PostModel })
+	post!: Ref<PostModel>;
 	
 	@prop({ required: true, trim: true })
 	name!: string;

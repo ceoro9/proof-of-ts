@@ -15,7 +15,7 @@ export class Post extends Typegoose {
 	@prop({ required: true })
 	text?: string;
 
-	@arrayProp({ items: String })
+	@arrayProp({ items: String, default: [] })
 	tags?: Array<string>;
 
 	@prop()

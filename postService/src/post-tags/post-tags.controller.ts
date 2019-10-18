@@ -40,9 +40,13 @@ export class PostTagsController {
 	@Delete(':postTagId')
 	@UsePipes(new MongooseObjectIdParamValidationPipe())
 	public async deletePostTagById(@Param('postTagId') postTagId: mongoose.Types.ObjectId) {
-		// TODO: implement removing from post model
-		// const postTag = await this.postTagsService.getPostTagById(postTagId);
-		return this.postTagsService.deletePostTagById(postTagId);
+		const postTag = await this.postTagsService.getPostTagById(postTagId);
+		const post    = await this.postService.getPostById(new mongoose.Types.ObjectId(postTag.post.toString()));
+		const [ updatedPost, _ ] = await Promise.all([
+			this.postService.updatePostTags(post._id, post.tags!.filter(tagName => tagName !== postTag.name)),
+			this.postTagsService.deletePostTagById(postTagId),
+		])
+		return updatedPost;
 	}
 
 	@Get('by-post/:postId')
