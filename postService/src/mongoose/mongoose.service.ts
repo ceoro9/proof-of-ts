@@ -24,10 +24,18 @@ export class MongooseService implements OnApplicationBootstrap, OnApplicationShu
 	 */
 	public async onApplicationBootstrap() {
 
-		const dbURL  = this.configService.getStrict('MONGO_URL');
-		const dbName = this.configService.getStrict('MONGO_POSTS_DB_NAME');
+		const dbURL          = this.configService.getStrict('MONGO_URL');
+		const dbName         = this.configService.getStrict('MONGO_POSTS_DB_NAME');
+		const replicaSetName = this.configService.getStrict('REPLICASET_NAME');
 
-		const setUpMongooseInstance = () => mongoose.connect(dbURL + dbName, { useNewUrlParser: true });
+		console.log(dbURL + dbName);
+
+		const setUpMongooseInstance = () => mongoose.connect(dbURL + dbName, {
+			useNewUrlParser:  true,
+			useFindAndModify: false,
+			useCreateIndex:   true,
+			replicaSet:       replicaSetName,
+		});
 
 		return new Promise(async (resolve, reject) => {
 

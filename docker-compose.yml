@@ -18,26 +18,62 @@ services:
   #   build: ./postService
   #   container_name: post_service
   #   ports:
-  #     - "8000:8002"
+  #     - "3000:3000"
   #   env_file:
   #     - ./postService/env-vars.env
   #   links:
-  #     - post_mongo:database
+  #     - post_mongo_1:database
+  #     - post_mongo_2:database
+  #     - post_mongo_3:database
   #   networks:
   #     - backend
   
-  post_mongo:
-    image: mongo:latest
-    container_name: post_mongo
+  post_mongo_1:
+    hostname: post_mongo_1
+    image: mongo:4.2.0-bionic
+    container_name: post_localmongo1
+    expose:
+      - 27017
     ports:
       - "5002:27017"
+    networks: 
+      - backend
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+
+  # PRIMARY !!!!
+  post_mongo_2:
+    hostname: post_mongo_2
+    image: mongo:4.2.0-bionic
+    container_name: post_localmongo2
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
     volumes:
       - ./postService/data:/data/db
     networks: 
       - backend
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+
+  post_mongo_3:
+    hostname: post_mongo_3
+    image: mongo:4.2.0-bionic
+    container_name: post_localmongo3
+    expose:
+      - 27017
+    ports:
+      - "5003:27017"
+    networks: 
+      - backend
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+  
   
   user_mongo:
-    image: mongo:latest
+    # hostname: user_mongo
+    image: mongo:4.2.0-bionic
     container_name: user_mongo
     ports:
       - "5001:27017"
