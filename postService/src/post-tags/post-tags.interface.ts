@@ -1,7 +1,7 @@
-import { Types }                               from 'mongoose';
-import { InstanceType }                        from 'typegoose';
-import { PostTagModel }                        from './post-tags.model';
-import { CreatePostTagDTO, UpdatePostTagsDTO } from './post-tags.dto';
+import { Types }                                from 'mongoose';
+import { InstanceType }                         from 'typegoose';
+import { PostTagModel }                         from './post-tags.model';
+import { CreatePostTagsDTO, UpdatePostTagsDTO } from './post-tags.dto';
 
 export type PostTagModelInstance     = InstanceType<PostTagModel>;
 export type PromisedPostTagInstance  = Promise<PostTagModelInstance>;
@@ -13,12 +13,17 @@ export interface IPostTagsService {
 
 	getPostTagsByPostId(postId: Types.ObjectId): PromisedPostTagInstances;
 	
-	createPostTags(createPostTagDTO: CreatePostTagDTO): PromisedPostTagInstances;
+	createPostTags(createPostTagDTO: CreatePostTagsDTO): PromisedPostTagInstances;
 
 	updatePostTags(updatePostTagsDTO: UpdatePostTagsDTO): PromisedPostTagInstances;
 
-	deletePostTagById(postTagId: Types.ObjectId): null;
+	deletePostTagById(postTagId: Types.ObjectId): PromisedPostTagInstance;
 
-	deleteAllPostTags(postId: Types.ObjectId): null;
+	/**
+	 * Delete all tags associated with provided post
+	 * @param postId
+	 * @returns number of deleted post tags
+	 */
+	deleteAllPostTagsByPostId(postId: Types.ObjectId): Promise<number>;
 
 }

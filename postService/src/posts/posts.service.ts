@@ -1,7 +1,7 @@
-import mongoose, { DocumentQuery, ClientSession, Query } from 'mongoose';
-import { Typegoose, ModelType }                   from 'typegoose';
-import { Injectable, NotFoundException, Inject }  from '@nestjs/common';
-import { IPostService, IPostServiceSafe }         from './posts.interface';
+import mongoose, { ClientSession, Query, SaveOptions } from 'mongoose';
+import { Typegoose, ModelType }                        from 'typegoose';
+import { Injectable, NotFoundException, Inject }       from '@nestjs/common';
+import { IPostService, IPostServiceSafe }              from './posts.interface';
 import { PostModel }              from './post.model';
 import { UserService }            from '../users/users.service';
 import { UpdatePostDTO }          from './update-post.dto';
@@ -52,6 +52,10 @@ export abstract class BaseService<T extends Typegoose> {
 		return this.model.create([props], { session: this.getSession() });
 	}
 
+	public createMany(docs: Array<any>) {
+		return this.model.create(docs, { session: this.getSession() } as SaveOptions);
+	}
+
 	public find(filters: any) {
 		return this.model.find(filters);
 	}
@@ -88,6 +92,10 @@ export abstract class BaseService<T extends Typegoose> {
 			throw this.getNotFoundException();
 		}
 		return document;
+	}
+
+	public findManyAndDelete(filter: any) {
+		return this.model.deleteMany(filter);
 	}
 
 	private getNotFoundException() {

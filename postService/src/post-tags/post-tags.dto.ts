@@ -6,6 +6,7 @@ import {
 	ArrayUnique,
 	ArrayMaxSize,
 	ArrayMinSize,
+	IsDefined,
 } from "class-validator";
 
 const MIN_POST_TAGS = 0;
@@ -13,23 +14,27 @@ const MAX_POST_TAGS = 10;
 
 export class CreatePostTagDTO extends BaseDTO {
 	
+	@IsDefined()
 	@Validate(MongooseObjectId)
-	readonly post?: string;
+	readonly post!: string;
 
+	@IsDefined()
 	@Length(2, 100)
-	readonly name?: string;
+	readonly name!: string;
 
 }
 
 export class CreatePostTagsDTO extends BaseDTO {
 
+	@IsDefined()
 	@Validate(MongooseObjectId)
-	readonly post?: string;
+	readonly post!: string;
 
+	@IsDefined()
 	@ArrayUnique()
 	@ArrayMinSize(MIN_POST_TAGS)
 	@ArrayMaxSize(MAX_POST_TAGS)
-	readonly tags?: Array<string>;
+	readonly tags!: Array<string>;
 
 }
 
