@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { ILogger }           from '../logger';
 import { Injectable, Scope } from '@nestjs/common';
 import { ConfigService }     from '../config/config.service';
+import { ILogger }           from '../logger/logger.interface';
 import { MongooseService }   from './mongoose.service';
 
 @Injectable({ scope: Scope.REQUEST })

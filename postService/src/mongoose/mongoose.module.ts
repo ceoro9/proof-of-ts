@@ -1,20 +1,26 @@
-import { Module, Provider, Scope } from '@nestjs/common';
-import { ConfigModule }            from '../config/config.module';
-import { MongooseService }         from './mongoose.service';
-import { LoggerModule }            from '../logger/logger.module';
-import { MongooseSessionService }  from './session.service';
+import { Module, Scope }           from '@nestjs/common';
+
+import { ConfigModule }            from '../config';
+import { LoggerModule }            from '../logger';
+
 import { ConfigService }           from '../config/config.service';
-import { ILogger }                 from '../logger';
+import { ILogger }                 from '../logger/logger.interface';
+
+import { MongooseService }         from './mongoose.service';
+import { MongooseSessionService }  from './session.service';
+
 
 const mongooseSessionProvider = {
 	provide: MongooseSessionService,
 	scope: Scope.REQUEST,
-	useFactory: async (logger: ILogger, configService: ConfigService, mongooseService: MongooseService) => {
-		const result = await MongooseSessionService.startSession(logger, configService, mongooseService);
-		return result;
+	useFactory: async (logger: ILogger,
+										 configService: ConfigService,
+										 mongooseService: MongooseService) => {
+		return MongooseSessionService.startSession(logger, configService, mongooseService);
 	},
 	inject: [ILogger, ConfigService, MongooseService],
 }
+
 
 @Module({
 	imports: [

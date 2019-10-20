@@ -2,6 +2,7 @@ import { Module, DynamicModule, Provider } from '@nestjs/common';
 import { ConfigService }                   from './config.service';
 import { WinstonLoggerService }            from './config.winston-logger-service';
 
+
 @Module({
 	providers: [WinstonLoggerService],
 	exports:   [WinstonLoggerService],

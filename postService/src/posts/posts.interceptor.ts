@@ -1,8 +1,13 @@
-import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Observable }             from 'rxjs';
+import { catchError, map }        from 'rxjs/operators';
 import { MongooseSessionService } from '../mongoose/session.service';
-import { ILogger } from '../logger';
+import { ILogger }                from '../logger/logger.interface';
+import {
+	Injectable,
+	NestInterceptor,
+	ExecutionContext,
+	CallHandler,
+} from '@nestjs/common';
 
 @Injectable()
 export class CloseMongooseSessionInterceptor implements NestInterceptor {

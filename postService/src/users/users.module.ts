@@ -1,6 +1,7 @@
 import { Module }       from '@nestjs/common';
-import { ConfigModule } from '../config/config.module';
+import { ConfigModule } from '../config';
 import { UserService }  from './users.service';
+
 
 @Module({
 	imports:   [ConfigModule.register({ USER_SERVICE_URL: 'http://localhost:8000' })],
