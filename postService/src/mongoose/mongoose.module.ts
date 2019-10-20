@@ -24,7 +24,7 @@ const mongooseSessionProvider = {
 
 @Module({
 	imports: [
-		ConfigModule.register('/home/ceoro9/ts_practive/proof-of-ts/postService/env-vars.env'),
+		ConfigModule.register(),
 		LoggerModule,
 	],
 	providers: [

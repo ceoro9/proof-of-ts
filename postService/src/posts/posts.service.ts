@@ -19,13 +19,6 @@ export abstract class BaseService<T extends Typegoose> {
 
 		this.model = new Proxy(model, {
 
-			// intercept constructing of model
-			// construct(target: ModelType<T>, args: unknown[]) {
-			// 	const result = new target(...args);
-			// 	console.log(`RESULT = ${result} ${args} --- ${target}`);
-			// 	return result;
-			// },
-
 			get(target: ModelType<T> & { [key: string]: any }, propKey: string, receiver: any) {
 
 				const originProperty = Reflect.get(target, propKey, receiver);

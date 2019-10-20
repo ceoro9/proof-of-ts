@@ -62,12 +62,4 @@ export class PostTagsController {
 		return this.postTagsService.deleteAllPostTagsByPostId(postId);
 	}
 
-
-
-	// @Post()
-	// @UsePipes(new DTOBodyValidadtionPipe())
-	// public createUserPost(@Body() createPostDTO: CreatePostDTO) {
-	// 	return this.postService.createPost(createPostDTO);
-	// }
-
 }
