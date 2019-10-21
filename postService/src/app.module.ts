@@ -5,8 +5,9 @@ import { ConfigModule }   from './config/config.module';
 import { PostsModule }    from './posts/posts.module';
 import { MongooseModule } from './mongoose/mongoose.module';
 import { PostTagsModule } from './post-tags/post-tags.module';
+import { BaseModule }     from './base/base.module';
 import { UsersModule }    from './users/users.module';
-import { LoggerModule }   from './logger/logger.module';
+import { LoggerModule }   from './mongoose/logger.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { LoggerModule }   from './logger/logger.module';
 		LoggerModule,
 		UsersModule,
 		PostTagsModule,
+		BaseModule,
 	],
   controllers: [AppController],
   providers: [AppService],
