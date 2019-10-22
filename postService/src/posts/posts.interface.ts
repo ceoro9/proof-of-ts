@@ -1,8 +1,8 @@
-import { Types }         from 'mongoose';
 import { InstanceType }  from 'typegoose';
 import { PostModel }     from './post.model';
 import { CreatePostDTO } from './create-post.dto';
 import { UpdatePostDTO } from './update-post.dto';
+import { IResourceId }   from '../base/data-types/resource-id';
 
 // PostService
 // ====================================================================================
@@ -15,17 +15,17 @@ export interface IPostService {
 
 	createPost(postData: CreatePostDTO): PromisedPostInstance;
 	
-	getPostById(postId: Types.ObjectId): PromisedPostInstance;
+	getPostById(postId: IResourceId): PromisedPostInstance;
 	
-	updatePostById(postId: Types.ObjectId, newData: UpdatePostDTO): PromisedPostInstance;
+	updatePostById(postId: IResourceId, newData: UpdatePostDTO): PromisedPostInstance;
 	
-	deletePostById(postId: Types.ObjectId): PromisedPostInstance;
+	deletePostById(postId: IResourceId): PromisedPostInstance;
 	
-	getUserPostsByUserId(userId: Types.ObjectId): PromisedPostInstances;
+	getUserPostsByUserId(userId: IResourceId): PromisedPostInstances;
 
-	updatePostTags(postId: Types.ObjectId, tags: Array<string>): PromisedPostInstance;
+	updatePostTags(postId: IResourceId, tags: Array<string>): PromisedPostInstance;
 
-	removePostTags(postId: Types.ObjectId): PromisedPostInstance;
+	removePostTags(postId: IResourceId): PromisedPostInstance;
 
 }
 

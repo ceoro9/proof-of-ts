@@ -2,25 +2,29 @@ import { Types }                                from 'mongoose';
 import { ModelType }                            from 'typegoose';
 import { Injectable, Inject }                   from '@nestjs/common';
 import { plainToClass }                         from 'class-transformer';
-import { BaseService }                          from '../posts/posts.service';
+
 import { PostTagModel }                         from './post-tags.model';
-import { MongooseSessionService }               from '../mongoose/session.service';
 import { IPostTagsService }                     from './post-tags.interface';
 import { CreatePostTagsDTO, UpdatePostTagsDTO } from './post-tags.dto';
 
+import { MongooseSessionService }               from '../mongoose/session.service';
+import { BaseModelService }                     from '../base/base.service';
+import { IResourceId }                          from '../base/data-types/resource-id';
+
+
 @Injectable()
-export class PostTagsService extends BaseService<PostTagModel> implements IPostTagsService {
+export class PostTagsService extends BaseModelService<PostTagModel> implements IPostTagsService {
 
 	public constructor(@Inject(PostTagModel) model: ModelType<PostTagModel>,
 										 private readonly mongooseSessionService: MongooseSessionService) {
 		super(model);
 	}
 
-	public getPostTagById(postTagId: Types.ObjectId) {
+	public getPostTagById(postTagId: IResourceId) {
 		return this.findById(postTagId);
 	}
 
-	public getPostTagsByPostId(post: Types.ObjectId) {
+	public getPostTagsByPostId(post: IResourceId) {
 		return this.find({ post }).exec();
 	}
 
@@ -31,18 +35,21 @@ export class PostTagsService extends BaseService<PostTagModel> implements IPostT
 		})));
 	}
 
-	public updatePostTags(updatePostTagsDTO: UpdatePostTagsDTO) {
+	public async updatePostTags(updatePostTagsDTO: UpdatePostTagsDTO) {
 		const { post, tags } = updatePostTagsDTO;
-		this.deleteAllPostTagsByPostId(new Types.ObjectId(post));
 		const createPostDTO = plainToClass(CreatePostTagsDTO, { post, tags });
-		return this.createPostTags(createPostDTO);
+		const [ _, createdPostTags ] = await Promise.all([
+			this.deleteAllPostTagsByPostId(post),
+			this.createPostTags(createPostDTO),
+		]);
+		return createdPostTags;
 	}
 
-	public deletePostTagById(postTagId: Types.ObjectId) {
+	public deletePostTagById(postTagId: IResourceId) {
 		return this.findOneAndDelete({ _id: postTagId });
 	}
 
-	public async deleteAllPostTagsByPostId(post: Types.ObjectId) {
+	public async deleteAllPostTagsByPostId(post: IResourceId) {
 		const { deletedCount } = await this.findManyAndDelete({ post }).exec();
 		return deletedCount ? deletedCount : 0;
 	}
