@@ -35,10 +35,10 @@ export class CreatePostTagsDTO extends MongooseModelDTO {
 	readonly postId!: IResourceId;
 
 	@IsDefined()
+	@IsString({ each: true })
 	@ArrayUnique()
 	@ArrayMinSize(MIN_POST_TAGS)
 	@ArrayMaxSize(MAX_POST_TAGS)
-	@Type(() => String)
 	readonly tags!: Array<string>;
 
 }
