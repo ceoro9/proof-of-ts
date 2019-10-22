@@ -5,9 +5,9 @@ import {
 	Injectable,
 	BadRequestException,
 } from '@nestjs/common';
-import { validate }     from 'class-validator';
-import { plainToClass } from 'class-transformer';
-import { BaseDTO }      from './create-post.dto';
+import { validate }          from 'class-validator';
+import { plainToClass }      from 'class-transformer';
+import { BaseModelDTO }      from '../base/base.dto';
 
 /**
  * Checks if B is sub-class of A
@@ -50,7 +50,7 @@ export class DTOBodyValidadtionPipe implements PipeTransform {
 	
 	public async transform(value: any, { metatype, type }: ArgumentMetadata) {
 
-		if (type === 'body' && metatype && isSubClass(metatype)(BaseDTO)) {
+		if (type === 'body' && metatype && isSubClass(metatype)(BaseModelDTO)) {
 			
 			const object = plainToClass(metatype, value);
 			const errors = await validate(object);

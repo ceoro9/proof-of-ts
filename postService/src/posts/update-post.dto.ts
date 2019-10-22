@@ -1,7 +1,8 @@
-import { BaseDTO } from './create-post.dto';
-import { Length }  from 'class-validator';
+import { Length }           from 'class-validator';
+import { MongooseModelDTO } from '../mongoose/mongoose.dto';
 
-export class UpdatePostDTO extends BaseDTO {
+
+export class UpdatePostDTO extends MongooseModelDTO {
 	
 	@Length(5, 100)
 	readonly title?: string;

@@ -1,5 +1,6 @@
-import { BaseDTO, CreatePostDTO } from "../posts/create-post.dto";
-import { MongooseObjectId }       from '../posts/posts.validators'
+import { CreatePostDTO }    from '../posts/create-post.dto';
+import { MongooseObjectId } from '../posts/posts.validators';
+import { MongooseModelDTO } from '../mongoose/mongoose.dto';
 import {
 	Validate,
 	Length,
@@ -12,7 +13,7 @@ import {
 const MIN_POST_TAGS = 0;
 const MAX_POST_TAGS = 10;
 
-export class CreatePostTagDTO extends BaseDTO {
+export class CreatePostTagDTO extends MongooseModelDTO {
 	
 	@IsDefined()
 	@Validate(MongooseObjectId)
@@ -24,7 +25,7 @@ export class CreatePostTagDTO extends BaseDTO {
 
 }
 
-export class CreatePostTagsDTO extends BaseDTO {
+export class CreatePostTagsDTO extends MongooseModelDTO {
 
 	@IsDefined()
 	@Validate(MongooseObjectId)
