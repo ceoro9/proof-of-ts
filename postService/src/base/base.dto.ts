@@ -8,6 +8,7 @@ export class BaseDTO {
 
 	public async validate() {
 		const validationErrors = await validateSchema(this);
+		console.log(validationErrors);
 		this.isValid = validationErrors.length === 0;
 		return validationErrors;
 	}

@@ -1,4 +1,3 @@
-import { Types }                                from 'mongoose';
 import { ModelType }                            from 'typegoose';
 import { Injectable, Inject }                   from '@nestjs/common';
 import { plainToClass }                         from 'class-transformer';
@@ -30,16 +29,16 @@ export class PostTagsService extends BaseModelService<PostTagModel> implements I
 
 	public createPostTags(createPostsTagsDTO: CreatePostTagsDTO) {
 		return this.createMany(createPostsTagsDTO.tags.map(tagName => ({
-			post: createPostsTagsDTO.post,
+			post: createPostsTagsDTO.postId,
 			name: tagName,
 		})));
 	}
 
 	public async updatePostTags(updatePostTagsDTO: UpdatePostTagsDTO) {
-		const { post, tags } = updatePostTagsDTO;
-		const createPostDTO = plainToClass(CreatePostTagsDTO, { post, tags });
+		const { postId, tags } = updatePostTagsDTO;
+		const createPostDTO = plainToClass(CreatePostTagsDTO, { postId, tags });
 		const [ _, createdPostTags ] = await Promise.all([
-			this.deleteAllPostTagsByPostId(post),
+			this.deleteAllPostTagsByPostId(postId),
 			this.createPostTags(createPostDTO),
 		]);
 		return createdPostTags;

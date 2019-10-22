@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { Controller, Get, Post, Param,
 	       UsePipes, Body, Delete, UseInterceptors, Put } from '@nestjs/common';
 import { DTOBodyValidadtionPipe }                       from '../posts/posts.pipes';
@@ -10,7 +9,7 @@ import { MongooseObjectIdParamValidationPipe }          from '../mongoose/mongoo
 import { IResourceId }                                  from '../base/data-types/resource-id';
 
 
-const postTagId = 'postTagId';
+const postTagId = 'postTagId'; 
 const postId    = 'postId';
 
 
@@ -25,16 +24,16 @@ export class PostTagsController {
 	@UsePipes(new DTOBodyValidadtionPipe())
 	public async createPostTags(@Body() createPostTagsDTO: CreatePostTagsDTO) {
 		// TODO: add validation that post does not yet have any tags
-		const { post, tags } = createPostTagsDTO;
+		const { postId, tags } = createPostTagsDTO;
 		await this.postTagsService.createPostTags(createPostTagsDTO);
-		return this.postService.updatePostTags(new mongoose.Types.ObjectId(post), tags);
+		return this.postService.updatePostTags(postId, tags);
 	}
 
 	@Put()
 	@UsePipes(new DTOBodyValidadtionPipe())
 	public async updatePostTags(@Body() updatePostTagsDTO: UpdatePostTagsDTO) {
-		const { post, tags } = updatePostTagsDTO;
-		await this.postService.updatePostTags(new mongoose.Types.ObjectId(post), tags);
+		const { postId, tags } = updatePostTagsDTO;
+		await this.postService.updatePostTags(postId, tags);
 		return this.postTagsService.updatePostTags(updatePostTagsDTO);
 	}
 
@@ -48,7 +47,7 @@ export class PostTagsController {
 	@UsePipes(new MongooseObjectIdParamValidationPipe(postTagId))
 	public async deletePostTagById(@Param(postTagId) postTagId: IResourceId) {
 		const postTag = await this.postTagsService.getPostTagById(postTagId);
-		const post    = await this.postService.getPostById(new mongoose.Types.ObjectId(postTag.post.toString()));
+		const post    = await this.postService.getPostById(postTag.post);
 		const [ updatedPost, _ ] = await Promise.all([
 			this.postService.updatePostTags(post._id, post.tags!.filter(tagName => tagName !== postTag.name)),
 			this.postTagsService.deletePostTagById(postTagId),
@@ -65,8 +64,7 @@ export class PostTagsController {
 	@Delete(`by-post/:${postId}`)
 	@UsePipes(new MongooseObjectIdParamValidationPipe(postId))
 	public async deletePostTagsByPostId(@Param(postId) postId: IResourceId) {
-		// TODO:
-		// await this.postService.removePostTags(postId);
+		await this.postService.removePostTags(postId);
 		return this.postTagsService.deleteAllPostTagsByPostId(postId);
 	}
 

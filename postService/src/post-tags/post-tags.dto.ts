@@ -1,25 +1,29 @@
-import { CreatePostDTO }    from '../posts/create-post.dto';
-import { MongooseObjectId } from '../posts/posts.validators';
-import { MongooseModelDTO } from '../mongoose/mongoose.dto';
+import { CreatePostDTO }       from '../posts/create-post.dto';
+import { MongooseModelDTO }    from '../mongoose/mongoose.dto';
+import { IResourceId }         from '../base/data-types/resource-id';
+import { Type }                from 'class-transformer';
+import { PostIdResourceField } from '../posts/posts.validators';
 import {
-	Validate,
 	Length,
 	ArrayUnique,
 	ArrayMaxSize,
 	ArrayMinSize,
+	IsString,
 	IsDefined,
 } from "class-validator";
+
 
 const MIN_POST_TAGS = 0;
 const MAX_POST_TAGS = 10;
 
+
 export class CreatePostTagDTO extends MongooseModelDTO {
 	
-	@IsDefined()
-	@Validate(MongooseObjectId)
-	readonly post!: string;
+	@PostIdResourceField()
+	readonly postId!: IResourceId;
 
 	@IsDefined()
+	@IsString()
 	@Length(2, 100)
 	readonly name!: string;
 
@@ -27,14 +31,14 @@ export class CreatePostTagDTO extends MongooseModelDTO {
 
 export class CreatePostTagsDTO extends MongooseModelDTO {
 
-	@IsDefined()
-	@Validate(MongooseObjectId)
-	readonly post!: string;
+	@PostIdResourceField()
+	readonly postId!: IResourceId;
 
 	@IsDefined()
 	@ArrayUnique()
 	@ArrayMinSize(MIN_POST_TAGS)
 	@ArrayMaxSize(MAX_POST_TAGS)
+	@Type(() => String)
 	readonly tags!: Array<string>;
 
 }

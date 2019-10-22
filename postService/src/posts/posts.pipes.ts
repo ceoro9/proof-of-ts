@@ -50,10 +50,14 @@ export class DTOBodyValidadtionPipe implements PipeTransform {
 	
 	public async transform(value: any, { metatype, type }: ArgumentMetadata) {
 
+		console.log(metatype, 'ssssss');
+
 		if (type === 'body' && metatype && isSubClass(metatype)(BaseModelDTO)) {
 			
 			const object = plainToClass(metatype, value);
 			const errors = await validate(object);
+
+			console.log(errors);
 		
 			// TODO: prettiy error-response
 			if (errors.length) {

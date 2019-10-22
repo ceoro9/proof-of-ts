@@ -17,4 +17,8 @@ export class MongooseResourceId implements IResourceId {
 		return new mongoose.Types.ObjectId(this.resourceId).toHexString();
 	}
 
+	public async doesExist() {
+		return true;
+	}
+
 }
