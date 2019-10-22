@@ -19,9 +19,9 @@ export abstract class ResourceIdParamValidationPipe extends ResourceIdConstuctor
 	public transform(resourceIdValue: string, { type, data }: ArgumentMetadata) {
 
 		if (type === 'param' && data === this.paramName) {
-			
+
 			// TODO: get error message
-			if (this.isValidFormat(resourceIdValue)) {
+			if (!this.isValidFormat(resourceIdValue)) {
 				throw new BadRequestException('Validation failed. Invalid id format');
 			}
 

@@ -1,11 +1,18 @@
 import mongoose from 'mongoose';
 import { Controller, Get, Post, Param,
-	       UsePipes, Body, Delete, UseInterceptors, Put }                from '@nestjs/common';
-import { DTOBodyValidadtionPipe, MongooseObjectIdParamValidationPipe } from '../posts/posts.pipes';
-import { CloseMongooseSessionInterceptor }      from '../posts/posts.interceptor';
-import { IPostTagsService }                     from './post-tags.interface';
-import { CreatePostTagsDTO, UpdatePostTagsDTO } from './post-tags.dto';
-import { IPostService }                         from '../posts/posts.interface';
+	       UsePipes, Body, Delete, UseInterceptors, Put } from '@nestjs/common';
+import { DTOBodyValidadtionPipe }                       from '../posts/posts.pipes';
+import { CloseMongooseSessionInterceptor }              from '../posts/posts.interceptor';
+import { IPostTagsService }                             from './post-tags.interface';
+import { CreatePostTagsDTO, UpdatePostTagsDTO }         from './post-tags.dto';
+import { IPostService }                                 from '../posts/posts.interface';
+import { MongooseObjectIdParamValidationPipe }          from '../mongoose/mongoose.pipes';
+// import { IResourceId } from '../base/data-types/resource-id';
+
+
+const postTagId = 'postTagId';
+const postId    = 'postId';
+
 
 @Controller('post-tags')
 @UseInterceptors(CloseMongooseSessionInterceptor)
@@ -31,33 +38,33 @@ export class PostTagsController {
 		return this.postTagsService.updatePostTags(updatePostTagsDTO);
 	}
 
-	@Get(':postTagId')
-	@UsePipes(new MongooseObjectIdParamValidationPipe())
-	public getPostTagById(@Param('postTagId') postTagId: mongoose.Types.ObjectId) {
+	@Get(`:${postTagId}`)
+	@UsePipes(new MongooseObjectIdParamValidationPipe(postTagId))
+	public getPostTagById(@Param(postTagId) postTagId: mongoose.Types.ObjectId) {
 		return this.postTagsService.getPostTagById(postTagId);
 	}
 
-	@Delete(':postTagId')
-	@UsePipes(new MongooseObjectIdParamValidationPipe())
-	public async deletePostTagById(@Param('postTagId') postTagId: mongoose.Types.ObjectId) {
+	@Delete(`:${postTagId}`)
+	@UsePipes(new MongooseObjectIdParamValidationPipe(postTagId))
+	public async deletePostTagById(@Param(postTagId) postTagId: mongoose.Types.ObjectId) {
 		const postTag = await this.postTagsService.getPostTagById(postTagId);
 		const post    = await this.postService.getPostById(new mongoose.Types.ObjectId(postTag.post.toString()));
 		const [ updatedPost, _ ] = await Promise.all([
 			this.postService.updatePostTags(post._id, post.tags!.filter(tagName => tagName !== postTag.name)),
 			this.postTagsService.deletePostTagById(postTagId),
-		])
+		]);
 		return updatedPost;
 	}
 
-	@Get('by-post/:postId')
-	@UsePipes(new MongooseObjectIdParamValidationPipe())
-	public getPostTagsByPostId(@Param('postId') postId: mongoose.Types.ObjectId) {
+	@Get(`by-post/:${postId}`)
+	@UsePipes(new MongooseObjectIdParamValidationPipe(postId))
+	public getPostTagsByPostId(@Param(postId) postId: mongoose.Types.ObjectId) {
 		return this.postTagsService.getPostTagsByPostId(postId);
 	}
 
-	@Delete('by-post/:postId')
-	@UsePipes(new MongooseObjectIdParamValidationPipe())
-	public async deletePostTagsByPostId(@Param('postId') postId: mongoose.Types.ObjectId) {
+	@Delete(`by-post/:${postId}`)
+	@UsePipes(new MongooseObjectIdParamValidationPipe(postId))
+	public async deletePostTagsByPostId(@Param(postId) postId: mongoose.Types.ObjectId) {
 		await this.postService.removePostTags(postId);
 		return this.postTagsService.deleteAllPostTagsByPostId(postId);
 	}
