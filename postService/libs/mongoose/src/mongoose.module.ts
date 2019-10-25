@@ -1,10 +1,10 @@
 import { Module, Scope }           from '@nestjs/common';
 
-import { ConfigModule }            from '../libs/config/src';
-import { LoggerModule }            from '../libs/logger/src';
+import { ConfigModule }            from '@post-service/config';
+import { LoggerModule }            from '@post-service/logger';
 
-import { ConfigService }           from '../config/config.service';
-import { ILogger }                 from '../libs/logger/src/logger.interface';
+import { ConfigService }           from '@post-service/config/config.service';
+import { ILogger }                 from '@post-service/logger/logger.interface';
 
 import { MongooseService }         from './mongoose.service';
 import { MongooseSessionService }  from './session.service';

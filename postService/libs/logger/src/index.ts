@@ -1,1 +1,3 @@
-export * from '../../../mongoose/logger.module';
+export * from './logger.module';
+export * from './logger.interface';
+export * from './logger.service';

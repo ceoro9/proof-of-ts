@@ -1,5 +1,5 @@
 import { MongooseResourceId } from "./mongoose.data-types";
-import { BaseModelDTO }       from '../base/base.dto';
+import { BaseModelDTO }       from '@post-service/base/base.dto';
 
 
 export class MongooseModelDTO extends BaseModelDTO {

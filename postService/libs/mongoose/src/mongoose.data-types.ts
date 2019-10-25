@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IResourceId } from '../base/data-types/resource-id';
+import { IResourceId } from '@post-service/base/data-types/resource-id';
 
 export class MongooseResourceId implements IResourceId {
 

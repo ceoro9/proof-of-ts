@@ -1,4 +1,4 @@
-import { DoesResourceExistTypeService, ResourceIdField } from '../base/base.validators';
+import { DoesResourceExistTypeService, ResourceIdField } from '@post-service/base/base.validators';
 import { MongooseResourceId } from './mongoose.data-types';
 
 

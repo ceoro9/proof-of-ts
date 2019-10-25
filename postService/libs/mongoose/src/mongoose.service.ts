@@ -5,8 +5,8 @@ import {
 	OnApplicationShutdown,
 	OnApplicationBootstrap,
 } from '@nestjs/common';
-import { ConfigService } from '../config/config.service';
-import { ILogger }       from '../libs/logger/src/logger.interface';
+import { ConfigService } from '@post-service/config/config.service';
+import { ILogger }       from '@post-service/logger/logger.interface';
 
 @Injectable()
 export class MongooseService implements OnApplicationBootstrap, OnApplicationShutdown {

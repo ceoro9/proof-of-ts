@@ -7,7 +7,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -25,7 +25,7 @@
     "@nestjs/mongoose": "^6.1.2",
     "@nestjs/platform-express": "^6.8.0",
     "class-transformer": "^0.2.3",
-    "class-validator": "^0.10.1",
+    "class-validator": "^0.10.2",
     "dotenv": "^8.1.0",
     "mongoose": "^5.7.3",
     "node-fetch": "^2.6.0",
@@ -63,7 +63,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -71,7 +71,20 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "@post-service/base/(.*)": "<rootDir>/libs/base/src/$1",
+      "@post-service/config/(.*)": "<rootDir>/libs/config/src/$1",
+      "@post-service/logger/(.*)": "<rootDir>/libs/logger/src/$1",
+      "@post-service/mongoose/(.*)": "<rootDir>/libs/mongoose/src/$1",
+      "@post-service/users/(.*)": "<rootDir>/libs/users/src/$1",
+      "@post-service/post-tags/(.*)": "<rootDir>/libs/post-tags/src/$1",
+      "@post-service/posts/(.*)": "<rootDir>/libs/posts/src/$1"
+    }
   }
 }

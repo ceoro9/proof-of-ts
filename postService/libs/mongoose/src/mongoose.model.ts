@@ -1,7 +1,7 @@
 import { Typegoose } from 'typegoose';
 import { MongooseResourceIdField } from './mongoose.validation';
-import { PostModel } from '../posts/post.model';
-import { IResourceId } from '../base/data-types/resource-id';
+import { PostModel } from '@post-service/posts/post.model';
+import { IResourceId } from '@post-service/base/data-types/resource-id';
 
 
 export class BaseModel extends Typegoose {

@@ -1,6 +1,7 @@
 {
+  "collection": "@nestjs/schematics",
   "monorepo": true,
-  "root": "apps/main",
+  "root": "apps/main",  
   "sourceRoot": "apps/main/src",
   "compilerOptions": {
     "webpack": true,
@@ -14,15 +15,6 @@
       "sourceRoot": "apps/main/src",
       "compilerOptions": {
         "tsConfigPath": "apps/main/tsconfig.app.json"
-      }
-    },
-    "post-service": {
-      "type": "application",
-      "root": "apps/post-service",
-      "entryFile": "main",
-      "sourceRoot": "apps/post-service/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/post-service/tsconfig.app.json"
       }
     },
     "base": {
@@ -61,31 +53,31 @@
         "tsConfigPath": "libs/mongoose/tsconfig.lib.json"
       }
     },
-    "posts": {
-      "type": "application",
-      "root": "apps/posts",
-      "entryFile": "main",
-      "sourceRoot": "apps/posts/src",
+    "users": {
+      "type": "library",
+      "root": "libs/users",
+      "entryFile": "index",
+      "sourceRoot": "libs/users/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/posts/tsconfig.app.json"
+        "tsConfigPath": "libs/users/tsconfig.lib.json"
       }
     },
     "post-tags": {
-      "type": "application",
-      "root": "apps/post-tags",
-      "entryFile": "main",
-      "sourceRoot": "apps/post-tags/src",
+      "type": "library",
+      "root": "libs/post-tags",
+      "entryFile": "index",
+      "sourceRoot": "libs/post-tags/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/post-tags/tsconfig.app.json"
+        "tsConfigPath": "libs/post-tags/tsconfig.lib.json"
       }
     },
-    "users": {
-      "type": "application",
-      "root": "apps/users",
-      "entryFile": "main",
-      "sourceRoot": "apps/users/src",
+    "posts": {
+      "type": "library",
+      "root": "libs/posts",
+      "entryFile": "index",
+      "sourceRoot": "libs/posts/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/users/tsconfig.app.json"
+        "tsConfigPath": "libs/posts/tsconfig.lib.json"
       }
     }
   }

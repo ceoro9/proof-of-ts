@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Injectable } from '@nestjs/common';
-import { ResourceIdParamValidationPipe } from '../base/base.pipes';
+import { ResourceIdParamValidationPipe } from '@post-service/base/base.pipes';
 
 /**
  * This pipe transforms string object id from request param,
