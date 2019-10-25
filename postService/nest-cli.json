@@ -1,4 +1,92 @@
 {
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "monorepo": true,
+  "root": "apps/main",
+  "sourceRoot": "apps/main/src",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/main/tsconfig.app.json"
+  },
+  "projects": {
+    "main": {
+      "type": "application",
+      "root": "apps/main",
+      "entryFile": "main",
+      "sourceRoot": "apps/main/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/main/tsconfig.app.json"
+      }
+    },
+    "post-service": {
+      "type": "application",
+      "root": "apps/post-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/post-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/post-service/tsconfig.app.json"
+      }
+    },
+    "base": {
+      "type": "library",
+      "root": "libs/base",
+      "entryFile": "index",
+      "sourceRoot": "libs/base/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/base/tsconfig.lib.json"
+      }
+    },
+    "config": {
+      "type": "library",
+      "root": "libs/config",
+      "entryFile": "index",
+      "sourceRoot": "libs/config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/config/tsconfig.lib.json"
+      }
+    },
+    "logger": {
+      "type": "library",
+      "root": "libs/logger",
+      "entryFile": "index",
+      "sourceRoot": "libs/logger/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/logger/tsconfig.lib.json"
+      }
+    },
+    "mongoose": {
+      "type": "library",
+      "root": "libs/mongoose",
+      "entryFile": "index",
+      "sourceRoot": "libs/mongoose/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/mongoose/tsconfig.lib.json"
+      }
+    },
+    "posts": {
+      "type": "application",
+      "root": "apps/posts",
+      "entryFile": "main",
+      "sourceRoot": "apps/posts/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/posts/tsconfig.app.json"
+      }
+    },
+    "post-tags": {
+      "type": "application",
+      "root": "apps/post-tags",
+      "entryFile": "main",
+      "sourceRoot": "apps/post-tags/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/post-tags/tsconfig.app.json"
+      }
+    },
+    "users": {
+      "type": "application",
+      "root": "apps/users",
+      "entryFile": "main",
+      "sourceRoot": "apps/users/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/users/tsconfig.app.json"
+      }
+    }
+  }
 }
