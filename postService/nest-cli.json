@@ -1,7 +1,7 @@
 {
   "collection": "@nestjs/schematics",
   "monorepo": true,
-  "root": "apps/main",  
+  "root": "apps/main",
   "sourceRoot": "apps/main/src",
   "compilerOptions": {
     "webpack": true,
@@ -78,6 +78,15 @@
       "sourceRoot": "libs/posts/src",
       "compilerOptions": {
         "tsConfigPath": "libs/posts/tsconfig.lib.json"
+      }
+    },
+    "posts-service": {
+      "type": "application",
+      "root": "apps/posts-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/posts-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/posts-service/tsconfig.app.json"
       }
     }
   }
