@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package Authorization;
+
+message ResourcePolicy {
+    string resourceId   = 1;
+    string resourceType = 2;
+}
+
+message ResourceAction {
+    string actionId   = 1;
+    string resourceId = 2;
+    string name       = 3;
+}
+
+message DoesUserHasPermissionRequest {
+    string resourceId = 1;
+    string actionId   = 2;
+    string userId     = 3;
+}
+
+message DoesUserHasPermissionResponse {
+    bool result = 1;
+}
+
+message GetResourcePolicyByIdRequest {
+    string resourceId = 1;
+}
+
+service ResourcePolicyService {
+
+    rpc DoesUserHasPermission(DoesUserHasPermissionRequest) returns (DoesUserHasPermissionResponse);
+
+    rpc GetResourcePolicyById(GetResourcePolicyByIdRequest) returns (ResourcePolicy);
+
+}
+
+
+
+

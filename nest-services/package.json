@@ -29,11 +29,13 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.2",
     "dotenv": "^8.1.0",
+    "grpc": "^1.24.1",
     "mongoose": "^5.7.3",
     "node-fetch": "^2.6.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3",
+    "rxjs-grpc": "^0.2.4",
     "ts.data.json": "^0.3.0",
     "typegoose": "^5.9.1",
     "winston": "^3.2.1"
