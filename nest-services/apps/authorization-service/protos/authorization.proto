@@ -2,39 +2,78 @@ syntax = "proto3";
 
 package Authorization;
 
-message ResourcePolicy {
-    string resourceId   = 1;
-    string resourceType = 2;
+/*
+ * ===================================================
+ * 
+ *                  Core Message Types
+ *
+ * ===================================================
+*/
+
+message ResourceType {
+    string id   = 1;
+    string name = 2;
+
+    // list of actions that can be performed
+    // against this type of resource
+    repeated ResourceAction availableActions = 3;
 }
 
 message ResourceAction {
-    string actionId   = 1;
-    string resourceId = 2;
-    string name       = 3;
+    string name = 1;
 }
 
-message DoesUserHasPermissionRequest {
+message ResourceInstance {
+    string resourceId     = 1;
+    string typeId         = 2;
+		string ownerId        = 3;
+		ResourcePolicy policy = 4;
+}
+
+message ResourcePolicy {
+    // list of documents which specify who can access resource
+    // and which actions is allowed to be performed against it
+    repeated ResourcePolicyDocument documents = 2;
+}
+
+
+message ResourcePolicyDocument {
+    string identityId = 1;
+
+    // * or ? symbols to match action name
+    string actionsGlyph = 2;
+
+    // list of actions identity can perform against resource
+    repeated ResourceAction actions = 3;
+}
+
+/*
+ * ===================================================
+ * 
+ *             ResourcePermissionsService
+ *
+ * ===================================================
+*/
+
+message IsActionPermittedRequest {
     string resourceId = 1;
-    string actionId   = 2;
-    string userId     = 3;
+    string actionName = 2;
+    string identityId = 3;
 }
 
-message DoesUserHasPermissionResponse {
+message IsActionPermittedRequestResponse {
     bool result = 1;
 }
 
-message GetResourcePolicyByIdRequest {
+message ResourceById {
     string resourceId = 1;
 }
 
-service ResourcePolicyService {
+service ResourcePermissionsService {
 
-    rpc DoesUserHasPermission(DoesUserHasPermissionRequest) returns (DoesUserHasPermissionResponse);
-
-    rpc GetResourcePolicyById(GetResourcePolicyByIdRequest) returns (ResourcePolicy);
+    rpc GetResourcePolicyByResourceId(ResourceById) returns (ResourcePolicy);
+    
+    rpc IsActionPermitted(IsActionPermittedRequest) returns (IsActionPermittedRequestResponse);
 
 }
-
-
-
 

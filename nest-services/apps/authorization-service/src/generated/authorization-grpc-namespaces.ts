@@ -7,88 +7,121 @@ export namespace Authorization {
     export interface ClientFactory {
 
         /**
-         * Returns the ResourcePolicyService service client.
+         * Returns the ResourcePermissionsService service client.
          */
-        getResourcePolicyService(): Authorization.ResourcePolicyService;
+        getResourcePermissionsService(): Authorization.ResourcePermissionsService;
     }
 
     /** Builder for an RPC service server. */
     export interface ServerBuilder {
 
         /**
-         * Adds a ResourcePolicyService service implementation.
-         * @param impl ResourcePolicyService service implementation
+         * Adds a ResourcePermissionsService service implementation.
+         * @param impl ResourcePermissionsService service implementation
          */
-        addResourcePolicyService(impl: Authorization.ResourcePolicyService): Authorization.ServerBuilder;
+        addResourcePermissionsService(impl: Authorization.ResourcePermissionsService): Authorization.ServerBuilder;
     }
 
-    /** Properties of a ResourcePolicy. */
-    export interface ResourcePolicy {
+    /** Properties of a ResourceType. */
+    export interface ResourceType {
 
-        /** ResourcePolicy resourceId */
-        resourceId?: (string|null);
+        /** ResourceType id */
+        id?: (string|null);
 
-        /** ResourcePolicy resourceType */
-        resourceType?: (string|null);
+        /** ResourceType name */
+        name?: (string|null);
+
+        /** ResourceType availableActions */
+        availableActions?: (Authorization.ResourceAction[]|null);
     }
 
     /** Properties of a ResourceAction. */
     export interface ResourceAction {
 
-        /** ResourceAction actionId */
-        actionId?: (string|null);
-
-        /** ResourceAction resourceId */
-        resourceId?: (string|null);
-
         /** ResourceAction name */
         name?: (string|null);
     }
 
-    /** Properties of a DoesUserHasPermissionRequest. */
-    export interface DoesUserHasPermissionRequest {
+    /** Properties of a ResourceInstance. */
+    export interface ResourceInstance {
 
-        /** DoesUserHasPermissionRequest resourceId */
+        /** ResourceInstance resourceId */
         resourceId?: (string|null);
 
-        /** DoesUserHasPermissionRequest actionId */
-        actionId?: (string|null);
+        /** ResourceInstance typeId */
+        typeId?: (string|null);
 
-        /** DoesUserHasPermissionRequest userId */
-        userId?: (string|null);
+        /** ResourceInstance ownerId */
+        ownerId?: (string|null);
+
+        /** ResourceInstance policy */
+        policy?: (Authorization.ResourcePolicy|null);
     }
 
-    /** Properties of a DoesUserHasPermissionResponse. */
-    export interface DoesUserHasPermissionResponse {
+    /** Properties of a ResourcePolicy. */
+    export interface ResourcePolicy {
 
-        /** DoesUserHasPermissionResponse result */
+        /** ResourcePolicy documents */
+        documents?: (Authorization.ResourcePolicyDocument[]|null);
+    }
+
+    /** Properties of a ResourcePolicyDocument. */
+    export interface ResourcePolicyDocument {
+
+        /** ResourcePolicyDocument identityId */
+        identityId?: (string|null);
+
+        /** ResourcePolicyDocument actionsGlyph */
+        actionsGlyph?: (string|null);
+
+        /** ResourcePolicyDocument actions */
+        actions?: (Authorization.ResourceAction[]|null);
+    }
+
+    /** Properties of an IsActionPermittedRequest. */
+    export interface IsActionPermittedRequest {
+
+        /** IsActionPermittedRequest resourceId */
+        resourceId?: (string|null);
+
+        /** IsActionPermittedRequest actionName */
+        actionName?: (string|null);
+
+        /** IsActionPermittedRequest identityId */
+        identityId?: (string|null);
+    }
+
+    /** Properties of an IsActionPermittedRequestResponse. */
+    export interface IsActionPermittedRequestResponse {
+
+        /** IsActionPermittedRequestResponse result */
         result?: (boolean|null);
     }
 
-    /** Properties of a GetResourcePolicyByIdRequest. */
-    export interface GetResourcePolicyByIdRequest {
+    /** Properties of a ResourceById. */
+    export interface ResourceById {
 
-        /** GetResourcePolicyByIdRequest resourceId */
+        /** ResourceById resourceId */
         resourceId?: (string|null);
     }
 
-    /** Constructs a new ResourcePolicyService service. */
-    export interface ResourcePolicyService {
+    /** Constructs a new ResourcePermissionsService service. */
+    export interface ResourcePermissionsService {
 
         /**
-         * Calls DoesUserHasPermission.
-         * @param request DoesUserHasPermissionRequest message or plain object
+         * Calls GetResourcePolicyByResourceId.
+         * @param request ResourceById message or plain object
          * @param metadata Optional metadata
          * @returns Promise
          */
-        doesUserHasPermission(request: Authorization.DoesUserHasPermissionRequest, metadata?: grpc.Metadata): Observable<Authorization.DoesUserHasPermissionResponse>;
+        getResourcePolicyByResourceId(request: Authorization.ResourceById, metadata?: grpc.Metadata): Observable<Authorization.ResourcePolicy>;
 
         /**
-         * Calls GetResourcePolicyById.
-         * @param request GetResourcePolicyByIdRequest message or plain object
+         * Calls IsActionPermitted.
+         * @param request IsActionPermittedRequest message or plain object
          * @param metadata Optional metadata
          * @returns Promise
          */
-        getResourcePolicyById(request: Authorization.GetResourcePolicyByIdRequest, metadata?: grpc.Metadata): Observable<Authorization.ResourcePolicy>;
+        isActionPermitted(request: Authorization.IsActionPermittedRequest, metadata?: grpc.Metadata): Observable<Authorization.IsActionPermittedRequestResponse>;
     }
 }

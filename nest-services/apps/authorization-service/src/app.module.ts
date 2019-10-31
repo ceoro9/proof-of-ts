@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { ResourcePolicyService } from './app.controller';
-import { AppService } from './app.service';
+import { Module }                     from '@nestjs/common';
+import { ResourcePermissionsService } from './app.controller';
+import { AppService }                 from './app.service';
 
 @Module({
   imports: [],
-  controllers: [ResourcePolicyService],
+  controllers: [ResourcePermissionsService],
   providers: [AppService],
 })
 export class AppModule {}
