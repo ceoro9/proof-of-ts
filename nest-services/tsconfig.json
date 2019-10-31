@@ -60,6 +60,12 @@
       ],
       "@post-service/posts/*": [
         "libs/posts/src/*"
+      ],
+      "@authorization-service/resource-policy": [
+        "libs/resource-policy/src"
+      ],
+      "@authorization-service/resource-policy/*": [
+        "libs/resource-policy/src/*"
       ]
     }
   },

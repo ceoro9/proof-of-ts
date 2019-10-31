@@ -97,6 +97,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/authorization-service/tsconfig.app.json"
       }
+    },
+    "resource-policy": {
+      "type": "library",
+      "root": "libs/resource-policy",
+      "entryFile": "index",
+      "sourceRoot": "libs/resource-policy/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/resource-policy/tsconfig.lib.json"
+      }
     }
   }
 }
