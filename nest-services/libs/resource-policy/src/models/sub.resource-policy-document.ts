@@ -21,25 +21,4 @@ export class ResourcePolicyDocument {
 	@ValidateNested()
 	kind!: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>;
 
-	public isGlyphSymbolPolicy() {
-		return this.type === ResourcePolicyDocumentType.GLYPH_SYMBOL;
-	}
-
-	public isActionsListPolicy() {
-		return this.type === ResourcePolicyDocumentType.ACTIONS_LIST;
-	}
-
-	public static narrowPolicyTypeValue(obj: ResourcePolicyDocument) {
-
-		const isGlyphSymbolPolicy = (_kind: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>): _kind is GlyphSymbolPolicyDocumentType => {
-			return obj.isGlyphSymbolPolicy();
-		};
-
-		const isActionsListPolicy = (_kind: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>): _kind is ActionsListPolicyDocumentType => {
-			return obj.isActionsListPolicy();
-		};
-
-		return { isGlyphSymbolPolicy, isActionsListPolicy };
-	}
-	
 }
