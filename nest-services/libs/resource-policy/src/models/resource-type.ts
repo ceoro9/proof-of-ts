@@ -1,7 +1,7 @@
-import mongoose                  from 'mongoose';
-import { prop, arrayProp }       from '@typegoose/typegoose';
-import { IsString, ArrayUnique } from "class-validator";
-import { ResourceAction }        from './sub.resource-action';
+import mongoose                  								 from 'mongoose';
+import { prop, arrayProp }       								 from '@typegoose/typegoose';
+import { IsString, ArrayUnique, ValidateNested } from 'class-validator';
+import { ResourceAction }        								 from './sub.resource-action';
 
 
 export class ResourceType {
@@ -12,14 +12,9 @@ export class ResourceType {
   @prop({ required: true, unique: true })
 	name!: string;
 
-	@IsString({ each: true })
 	@ArrayUnique()
+	@ValidateNested({ each: true })
 	@arrayProp({ required: true, items: ResourceAction, _id: false })
 	availableActions!: Array<ResourceAction>;
-	
-	@prop()
-	get id() {
-		return this._id.toHexString();
-	}
 
 }

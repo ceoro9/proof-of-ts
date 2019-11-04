@@ -26,8 +26,8 @@ message ResourceAction {
 message ResourceInstance {
     string resourceId     = 1;
     string typeId         = 2;
-		string ownerId        = 3;
-		ResourcePolicy policy = 4;
+    string ownerId        = 3;
+    ResourcePolicy policy = 4;
 }
 
 message ResourcePolicy {
@@ -61,7 +61,7 @@ message IsActionPermittedRequest {
     string identityId = 3;
 }
 
-message IsActionPermittedRequestResponse {
+message IsActionPermittedResponse {
     bool result = 1;
 }
 
@@ -72,8 +72,12 @@ message ResourceById {
 service ResourcePermissionsService {
 
     rpc GetResourcePolicyByResourceId(ResourceById) returns (ResourcePolicy);
+
+    rpc CreateResourceInstance(ResourceInstance) returns (ResourceInstance);
+
+    rpc CreateResourceType(ResourceType) returns (ResourceType);
     
-    rpc IsActionPermitted(IsActionPermittedRequest) returns (IsActionPermittedRequestResponse);
+    rpc IsActionPermitted(IsActionPermittedRequest) returns (IsActionPermittedResponse);
 
 }
 

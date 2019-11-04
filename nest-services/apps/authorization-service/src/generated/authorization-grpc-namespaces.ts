@@ -91,10 +91,10 @@ export namespace Authorization {
         identityId?: (string|null);
     }
 
-    /** Properties of an IsActionPermittedRequestResponse. */
-    export interface IsActionPermittedRequestResponse {
+    /** Properties of an IsActionPermittedResponse. */
+    export interface IsActionPermittedResponse {
 
-        /** IsActionPermittedRequestResponse result */
+        /** IsActionPermittedResponse result */
         result?: (boolean|null);
     }
 
@@ -117,11 +117,27 @@ export namespace Authorization {
         getResourcePolicyByResourceId(request: Authorization.ResourceById, metadata?: grpc.Metadata): Observable<Authorization.ResourcePolicy>;
 
         /**
+         * Calls CreateResourceInstance.
+         * @param request ResourceInstance message or plain object
+         * @param metadata Optional metadata
+         * @returns Promise
+         */
+        createResourceInstance(request: Authorization.ResourceInstance, metadata?: grpc.Metadata): Observable<Authorization.ResourceInstance>;
+
+        /**
+         * Calls CreateResourceType.
+         * @param request ResourceType message or plain object
+         * @param metadata Optional metadata
+         * @returns Promise
+         */
+        createResourceType(request: Authorization.ResourceType, metadata?: grpc.Metadata): Observable<Authorization.ResourceType>;
+
+        /**
          * Calls IsActionPermitted.
          * @param request IsActionPermittedRequest message or plain object
          * @param metadata Optional metadata
          * @returns Promise
          */
-        isActionPermitted(request: Authorization.IsActionPermittedRequest, metadata?: grpc.Metadata): Observable<Authorization.IsActionPermittedRequestResponse>;
+        isActionPermitted(request: Authorization.IsActionPermittedRequest, metadata?: grpc.Metadata): Observable<Authorization.IsActionPermittedResponse>;
     }
 }

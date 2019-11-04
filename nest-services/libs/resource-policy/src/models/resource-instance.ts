@@ -24,9 +24,4 @@ export class ResourceInstance {
 	@prop({ required: true })
 	policy!: ResourcePolicy;
 	
-	@prop()
-	get id() {
-		return this._id.toHexString();
-	}
-
 }

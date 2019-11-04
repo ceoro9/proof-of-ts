@@ -20,22 +20,26 @@ export class ResourcePolicyDocument {
 	@prop({ required: true, refPath: 'type' })
 	@ValidateNested()
 	kind!: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>;
+
+	public isGlyphSymbolPolicy() {
+		return this.type === ResourcePolicyDocumentType.GLYPH_SYMBOL;
+	}
+
+	public isActionsListPolicy() {
+		return this.type === ResourcePolicyDocumentType.ACTIONS_LIST;
+	}
+
+	public static narrowPolicyTypeValue(obj: ResourcePolicyDocument) {
+
+		const isGlyphSymbolPolicy = (_kind: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>): _kind is GlyphSymbolPolicyDocumentType => {
+			return obj.isGlyphSymbolPolicy();
+		};
+
+		const isActionsListPolicy = (_kind: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>): _kind is ActionsListPolicyDocumentType => {
+			return obj.isActionsListPolicy();
+		};
+
+		return { isGlyphSymbolPolicy, isActionsListPolicy };
+	}
 	
 }
-
-/**
- * TODO: refactor this 2 type guards, but to keep type safeness
- */
-
-export function isGlyphSymbolPolicyDocumentType
-		(kind: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>): kind is GlyphSymbolPolicyDocumentType {
-	return !!(kind as any).value;
-}
-
-
-export function isActionsListPolicyDocumentType
-		(kind: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>): kind is ActionsListPolicyDocumentType {
-	return !!(kind as any).items;
-}
-
-

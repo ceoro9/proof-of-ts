@@ -25,6 +25,10 @@ export type ListKeysType<T> = {
 	[K in keyof T]: T[K]
 };
 
-export type ListModelKeysType<ModelType> = Omit<ListKeysType<ModelType>, '_id' | 'id'>;
+export type RecursivePartialAndNullable<T> = {
+	[P in keyof T]?: RecursivePartialAndNullable<T[P]> | null;
+};
+
+export type ListModelKeysType<ModelType> = RecursivePartialAndNullable<Omit<ListKeysType<ModelType>, '_id' | 'id'>>;
 
 
