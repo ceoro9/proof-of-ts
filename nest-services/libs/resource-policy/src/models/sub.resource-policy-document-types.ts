@@ -1,6 +1,5 @@
-import { prop, arrayProp }                   from '@typegoose/typegoose';
-import { IsString, ValidateNested, IsArray } from 'class-validator';
-import { ResourceAction }                    from './sub.resource-action';
+import { prop, arrayProp } from '@typegoose/typegoose';
+import { ResourceAction }  from './sub.resource-action';
 
 
 export enum ResourcePolicyDocumentType {
@@ -11,7 +10,6 @@ export enum ResourcePolicyDocumentType {
 
 export class GlyphSymbolPolicyDocumentType {
 
-	@IsString()
 	@prop({ required: true })
 	value!: string;
 
@@ -20,8 +18,6 @@ export class GlyphSymbolPolicyDocumentType {
 
 export class ActionsListPolicyDocumentType {
 
-	@IsArray()
-	@ValidateNested({ each: true })
 	@arrayProp({ required: true, items: ResourceAction, _id: false })
 	actions!: Array<ResourceAction>;
 

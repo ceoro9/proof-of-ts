@@ -1,5 +1,10 @@
-import { IsString, Length, ArrayUnique, ValidateNested } from 'class-validator';
 import { ResourceAction } from './sub.resource-action.dto';
+import {
+	IsString,
+	Length,
+	ArrayUnique,
+	ValidateNested,
+} from 'class-validator';
 
 
 export class CreateResourceTypeDTO {

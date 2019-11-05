@@ -5,7 +5,7 @@ import { plainToClass }                    										from 'class-transformer';
 import { ReturnModelType }                 										from '@typegoose/typegoose';
 import { IResourceId }                     										from '@post-service/base';
 import { ResourceType, ResourceInstance }  										from './models';
-import { ResourceTypeObject, ResourceInstanceObject } 				from './models/types';
+import { CreateResourceTypeDTO, CreateResourceInstanceDTO }   from './dtos';
 
 
 @Injectable()
@@ -16,7 +16,7 @@ export class ResourcePolicyService {
 		@InjectModel(ResourceInstance) private readonly resourceInstanceModel: ReturnModelType<typeof ResourceInstance>
 	) {}
 
-	public async createResourceType(resourceTypeObject: any) {
+	public async createResourceType(resourceTypeObject: CreateResourceTypeDTO) {
 		const resourceType = plainToClass(ResourceType, resourceTypeObject);
 		const errors = await validate(resourceType);
 		console.log(errors);
@@ -26,7 +26,7 @@ export class ResourcePolicyService {
 		return this.resourceTypeModel.create(resourceType);
 	}
 
-	public async createResourceInstance(resourceInstanceObject: any) {
+	public async createResourceInstance(resourceInstanceObject: CreateResourceInstanceDTO) {
 		const resourceInstance = plainToClass(ResourceInstance, resourceInstanceObject);
 		const errors = await validate(resourceInstance);
 		console.log(errors);

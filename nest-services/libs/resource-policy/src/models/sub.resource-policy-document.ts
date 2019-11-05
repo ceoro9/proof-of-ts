@@ -1,5 +1,4 @@
-import { prop, Ref }                         from '@typegoose/typegoose';
-import { IsString, ValidateNested, IsEnum  } from 'class-validator';
+import { prop, Ref } from '@typegoose/typegoose';
 import {
 	ResourcePolicyDocumentType,
 	GlyphSymbolPolicyDocumentType,
@@ -9,16 +8,13 @@ import {
 
 export class ResourcePolicyDocument {
 
-	@IsEnum(ResourcePolicyDocumentType)
-	@prop({ required: true, enum: ResourcePolicyDocumentType })
+	@prop({ required: true, enum: ResourcePolicyDocumentType, _id: false })
 	type!: ResourcePolicyDocumentType; 
 	
-	@IsString()
 	@prop({ required: true })
 	indentityId!: string;
 
 	@prop({ required: true, refPath: 'type' })
-	@ValidateNested()
 	kind!: Ref<GlyphSymbolPolicyDocumentType | ActionsListPolicyDocumentType>;
 
 }

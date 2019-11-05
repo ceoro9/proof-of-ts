@@ -1,7 +1,8 @@
 import { ValidateNested, IsMongoId } from 'class-validator';
 import { ResourcePolicy }            from './sub.resource-policy.dto';
 
-export class ResourceInstance {
+
+export class CreateResourceInstanceDTO {
 
 	@IsMongoId()
 	resourceId!: string;
@@ -14,11 +15,5 @@ export class ResourceInstance {
 
 	@ValidateNested()
 	policy!: ResourcePolicy;
-	
-}
-
-
-
-export class CreateResourceInstanceDTO {
 	
 }
