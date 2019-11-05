@@ -1,4 +1,4 @@
-import { ResourceAction } from './sub.resource-action.dto';
+import { ResourceActionDTO } from './sub.resource-action.dto';
 import {
 	IsString,
 	ArrayUnique,
@@ -43,7 +43,7 @@ export class IsOneDefinedFromFieldsValidation implements ValidatorConstraintInte
 }
 
 
-export class ResourcePolicyDocument {
+export class ResourcePolicyDocumentDTO {
 
 	@IsMongoId()
 	indentityId!: string;
@@ -57,6 +57,6 @@ export class ResourcePolicyDocument {
 		ArrayUnique(),
 		ValidateNested({ each: true }),
 	])
-	actions?: Array<ResourceAction>;
+	actions?: Array<ResourceActionDTO>;
 
 }

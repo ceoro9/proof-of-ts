@@ -16,24 +16,22 @@ export class ResourcePolicyService {
 		@InjectModel(ResourceInstance) private readonly resourceInstanceModel: ReturnModelType<typeof ResourceInstance>
 	) {}
 
-	public async createResourceType(resourceTypeObject: CreateResourceTypeDTO) {
-		const resourceType = plainToClass(ResourceType, resourceTypeObject);
-		const errors = await validate(resourceType);
+	public async createResourceType(createResourceTypeDTO: CreateResourceTypeDTO) {
+		const errors = await validate(createResourceTypeDTO);
 		console.log(errors);
 		if (errors.length) {
 			throw new BadRequestException('Invalid payload');
 		}
-		return this.resourceTypeModel.create(resourceType);
+		return this.resourceTypeModel.create(createResourceTypeDTO);
 	}
 
-	public async createResourceInstance(resourceInstanceObject: CreateResourceInstanceDTO) {
-		const resourceInstance = plainToClass(ResourceInstance, resourceInstanceObject);
-		const errors = await validate(resourceInstance);
+	public async createResourceInstance(createResourceInstanceDTO: CreateResourceInstanceDTO) {
+		const errors = await validate(createResourceInstanceDTO);
 		console.log(errors);
 		if (errors.length) {
 			throw new BadRequestException('Invalid payload');
 		}
-		return this.resourceInstanceModel.create(resourceInstance);
+		return this.resourceInstanceModel.create(createResourceInstanceDTO);
 	}
 
 	public async getResourceInstanceById(resourceInstanceId: IResourceId) {

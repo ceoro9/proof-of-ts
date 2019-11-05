@@ -1,4 +1,4 @@
-import { ResourceAction } from './sub.resource-action.dto';
+import { ResourceActionDTO } from './sub.resource-action.dto';
 import {
 	IsString,
 	Length,
@@ -15,6 +15,6 @@ export class CreateResourceTypeDTO {
 
 	@ArrayUnique()
 	@ValidateNested({ each: true })
-	availableActions!: Array<ResourceAction>;
+	availableActions!: Array<ResourceActionDTO>;
 
 }

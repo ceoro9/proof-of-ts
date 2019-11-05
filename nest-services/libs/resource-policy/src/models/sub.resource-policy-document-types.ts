@@ -1,5 +1,6 @@
-import { prop, arrayProp } from '@typegoose/typegoose';
-import { ResourceAction }  from './sub.resource-action';
+import { prop, arrayProp }                from '@typegoose/typegoose';
+import { ResourceAction }                 from './sub.resource-action';
+import { ResourcePolicyDocumentKindType } from './sub.resource-policy-document';
 
 
 export enum ResourcePolicyDocumentType {

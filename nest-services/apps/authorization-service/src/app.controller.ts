@@ -1,12 +1,17 @@
 import * as grpc                 from 'grpc';
 import * as rxjs                 from 'rxjs';
+import { plainToClass }          from 'class-transformer';
 import { Controller }            from '@nestjs/common';
 import { GrpcMethod }            from '@nestjs/microservices';
-import { ResourcePolicyService, ResourceInstance, ResourcePolicyDocument, ResourcePolicyDocumentType } from '@authorization-service/resource-policy';
 import { AppService }            from './app.service';
 import { Authorization as Auth } from './generated/authorization-grpc-namespaces';
-import { BaseGrpcException } from './app.exception';
-
+import {
+	ResourcePolicyService,
+	ResourcePolicyDocument,
+	CreateResourceTypeDTO,
+	CreateResourceInstanceDTO,
+	getResourceByMongoIdDTO,
+} from '@authorization-service/resource-policy';
 
 
 @Controller()
@@ -16,78 +21,38 @@ export class ResourcePermissionsService implements Auth.ResourcePermissionsServi
 							       private readonly resourcePolicyService: ResourcePolicyService) {}
 
 	@GrpcMethod()
-	public createResourceType(requestData: Auth.ResourceType, metadata?: grpc.Metadata) {
-		const resourceTypePromise = this.resourcePolicyService.createResourceType(requestData);
+	public createResourceType(requestData: Auth.ResourceType, _metadata?: grpc.Metadata) {
+		const createResourceTypeDTO = plainToClass(CreateResourceTypeDTO, requestData);
+		const resourceTypePromise   = this.resourcePolicyService.createResourceType(createResourceTypeDTO);
 		return rxjs.from(resourceTypePromise);
 	}
 
 	@GrpcMethod()
-	public createResourceInstance(requestData: Auth.ResourceInstance, metadata?: grpc.Metadata) {
-		// TODO:
-		const resourcePolicyDocuments = requestData.policy && requestData.policy.documents
-			? requestData.policy.documents.map((document: Auth.ResourcePolicyDocument) => {
-
-					
-
-					const resultDocument: ResourcePolicyDocument = {
-						indentityId: document.identityId,
-						kind: document.actions ? { value: document.actions } : document.actionsGlyph,
-						type: document.actions ? ResourcePolicyDocumentType.ACTIONS_LIST : ResourcePolicyDocumentType.GLYPH_SYMBOL,
-					};
-				
-					if (document.actions && document.actionsGlyph) {
-						throw new BaseGrpcException(grpc.status.INTERNAL, 'Actions list and glyph cannot be specified simultaneously');
-					}
-
-					if (document.actions) {
-
-					}
-					
-				})
-			: undefined;
-
-		const resourceInstancePromise = this.resourcePolicyService.createResourceInstance({
-			...requestData,
-			policy: {
-				...requestData.policy,
-				documents: resourcePolicyDocuments,
-			}
-		});
+	public createResourceInstance(requestData: Auth.ResourceInstance, _metadata?: grpc.Metadata) {
+		const createResourceInstanceDTO = plainToClass(CreateResourceInstanceDTO, requestData);
+		const resourceInstancePromise   = this.resourcePolicyService.createResourceInstance(createResourceInstanceDTO);
 		return rxjs.from(resourceInstancePromise);
 	}
 
   @GrpcMethod()
-  public isActionPermitted(requestData: Auth.IsActionPermittedRequest, metedata?: grpc.Metadata) {
+  public isActionPermitted(requestData: Auth.IsActionPermittedRequest, _metedata?: grpc.Metadata) {
 		return rxjs.of({'result': true} as Auth.IsActionPermittedResponse);
 	}
 	
 	@GrpcMethod()
-	public getResourcePolicyByResourceId(requestData: Auth.ResourceById, metadata?: grpc.Metadata) {
-		const resourceInstancePromise = this.resourcePolicyService.getResourceInstanceById(requestData.resourceId!);
-		return rxjs.from(resourceInstancePromise.then((resourceInstance: ResourceInstance) => ({
-			
-			documents: resourceInstance.policy.documents.map((resourcePolicyDocument: ResourcePolicyDocument) => {
-
-				const narrowPolicyTypeValue= ResourcePolicyDocument.narrowPolicyTypeValue(resourcePolicyDocument);
-
-				const getActionsGlyphField = () => {
-					return narrowPolicyTypeValue.isGlyphSymbolPolicy(resourcePolicyDocument.kind) ? resourcePolicyDocument.kind.value : null;
-				};
-
-				const getActionstsField = () => {
-					return narrowPolicyTypeValue.isActionsListPolicy(resourcePolicyDocument.kind) ? resourcePolicyDocument.kind.actions : null;
-				};
-
-				const result: Required<Auth.ResourcePolicyDocument> = {
-					identityId:    resourcePolicyDocument.indentityId,
-					actionsGlyph:  getActionsGlyphField(),
-					actions:       getActionstsField(),
-				};
-
-				return result;
-			})
-
-		})));
+	public getResourcePolicyByResourceId(requestData: Auth.ResourceById, _metadata?: grpc.Metadata) {
+		return rxjs.from(new Promise(async (resolve: (result: Auth.ResourcePolicy) => void ) => {
+			const resourceByMongoIdDTO = getResourceByMongoIdDTO(requestData.resourceId);
+			const resourcePolicy       = await this.resourcePolicyService.getResourceInstanceById(resourceByMongoIdDTO); 
+			resolve({
+				documents: resourcePolicy.policy.documents.map((resourcePolicyDocument: ResourcePolicyDocument) => {
+					const { indentityId } = resourcePolicyDocument;
+					const actionsGlyph    = resourcePolicyDocument.getGlyphSymbol();
+					const actions         = resourcePolicyDocument.getActions();
+					return { indentityId, actionsGlyph, actions };
+				})
+			});
+		}));
 	}
 
 }

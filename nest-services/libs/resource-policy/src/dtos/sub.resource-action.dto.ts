@@ -1,7 +1,7 @@
 import { IsString, Length } from 'class-validator';
 
 
-export class ResourceAction {
+export class ResourceActionDTO {
 	
 	@IsString()
 	@Length(2, 100)

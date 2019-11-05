@@ -1,5 +1,5 @@
 import { ValidateNested, IsMongoId } from 'class-validator';
-import { ResourcePolicy }            from './sub.resource-policy.dto';
+import { ResourcePolicyDTO }         from './sub.resource-policy.dto';
 
 
 export class CreateResourceInstanceDTO {
@@ -14,6 +14,6 @@ export class CreateResourceInstanceDTO {
 	ownerId!: string;
 
 	@ValidateNested()
-	policy!: ResourcePolicy;
+	policy!: ResourcePolicyDTO;
 	
 }

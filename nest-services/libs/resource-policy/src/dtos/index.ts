@@ -1,3 +1,4 @@
+export * from './base';
 export * from './resource-type.dto';
 export * from './resource-instance.dto';
 export * from './sub.resource-action.dto';
