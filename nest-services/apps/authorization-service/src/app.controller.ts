@@ -3,8 +3,8 @@ import * as rxjs                 from 'rxjs';
 import { plainToClass }          from 'class-transformer';
 import { Controller }            from '@nestjs/common';
 import { GrpcMethod }            from '@nestjs/microservices';
+import { Authorization as Auth } from '@authorization-service/resource-policy';
 import { AppService }            from './app.service';
-import { Authorization as Auth } from './generated/authorization-grpc-namespaces';
 import {
 	ResourcePolicyService,
 	ResourcePolicyDocument,

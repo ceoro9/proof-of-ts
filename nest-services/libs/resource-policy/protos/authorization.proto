@@ -36,7 +36,6 @@ message ResourcePolicy {
     repeated ResourcePolicyDocument documents = 2;
 }
 
-
 message ResourcePolicyDocument {
     string identityId = 1;
 
