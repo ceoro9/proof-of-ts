@@ -1,11 +1,14 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel }                                        from 'nestjs-typegoose';
 import { validate }                        									  from 'class-validator';
-import { plainToClass }                    										from 'class-transformer';
 import { ReturnModelType }                 										from '@typegoose/typegoose';
 import { IResourceId }                     										from '@post-service/base';
 import { ResourceType, ResourceInstance }  										from './models';
-import { CreateResourceTypeDTO, CreateResourceInstanceDTO }   from './dtos';
+import {
+	CreateResourceTypeDTO,
+	CreateResourceInstanceDTO,
+	ResourcePolicyDocumentDTO,
+} from './dtos';
 
 
 @Injectable()
@@ -17,11 +20,13 @@ export class ResourcePolicyService {
 	) {}
 
 	public async createResourceType(createResourceTypeDTO: CreateResourceTypeDTO) {
-		const errors = await validate(createResourceTypeDTO);
-		console.log(errors);
-		if (errors.length) {
-			throw new BadRequestException('Invalid payload');
-		}
+		console.log('NICE');
+		// const errors = await validate(createResourceTypeDTO);
+		// console.log(errors);
+		// if (errors.length) {
+		// 	throw new BadRequestException('Invalid payload');
+		// }
+		console.log('ZAZAZA');
 		return this.resourceTypeModel.create(createResourceTypeDTO);
 	}
 
@@ -31,7 +36,22 @@ export class ResourcePolicyService {
 		if (errors.length) {
 			throw new BadRequestException('Invalid payload');
 		}
-		return this.resourceInstanceModel.create(createResourceInstanceDTO);
+		const { resourceId, ownerId, typeId, policy } = createResourceInstanceDTO;
+		return this.resourceInstanceModel.create({
+			resourceId,
+			ownerId,
+			typeId,
+			policy: {
+				documents: policy.documents.map((rpDTO: ResourcePolicyDocumentDTO) => {
+					const { indentityId, policyDocumentType, value } = rpDTO;
+					return {
+						indentityId,
+						type: policyDocumentType,
+						kind: value,
+					};
+				})
+			}
+		});
 	}
 
 	public async getResourceInstanceById(resourceInstanceId: IResourceId) {

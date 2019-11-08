@@ -65,17 +65,23 @@ export namespace Authorization {
         documents?: (Authorization.ResourcePolicyDocument[]|null);
     }
 
+    /** ResourcePolicyDocumentType enum. */
+    export enum ResourcePolicyDocumentType {
+        GLYPH_SYMBOL = 1,
+        ACTIONS_LIST = 2
+    }
+
     /** Properties of a ResourcePolicyDocument. */
     export interface ResourcePolicyDocument {
 
         /** ResourcePolicyDocument identityId */
         identityId?: (string|null);
 
-        /** ResourcePolicyDocument actionsGlyph */
-        actionsGlyph?: (string|null);
+        /** ResourcePolicyDocument policyDocumentType */
+        policyDocumentType?: (Authorization.ResourcePolicyDocumentType|null);
 
-        /** ResourcePolicyDocument actions */
-        actions?: (Authorization.ResourceAction[]|null);
+        /** ResourcePolicyDocument policyDocumentValue */
+        policyDocumentValue?: (google.protobuf.Any|null);
     }
 
     /** Properties of an IsActionPermittedRequest. */
@@ -139,5 +145,39 @@ export namespace Authorization {
          * @returns Promise
          */
         isActionPermitted(request: Authorization.IsActionPermittedRequest, metadata?: grpc.Metadata): Observable<Authorization.IsActionPermittedResponse>;
+    }
+}
+
+/** Namespace google. */
+export namespace google {
+
+    /** Contains all the RPC service clients. */
+    export interface ClientFactory {
+    }
+
+    /** Builder for an RPC service server. */
+    export interface ServerBuilder {
+    }
+
+    /** Namespace protobuf. */
+    export namespace protobuf {
+
+        /** Contains all the RPC service clients. */
+        export interface ClientFactory {
+        }
+
+        /** Builder for an RPC service server. */
+        export interface ServerBuilder {
+        }
+
+        /** Properties of an Any. */
+        export interface Any {
+
+            /** Any type_url */
+            type_url?: (string|null);
+
+            /** Any value */
+            value?: (Uint8Array|null);
+        }
     }
 }

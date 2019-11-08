@@ -4,6 +4,7 @@ import {
 	Length,
 	ArrayUnique,
 	ValidateNested,
+	IsArray,
 } from 'class-validator';
 
 
@@ -13,8 +14,9 @@ export class CreateResourceTypeDTO {
 	@Length(2, 100)
 	name!: string;
 
-	@ArrayUnique()
-	@ValidateNested({ each: true })
+	// @IsArray()
+	// @ArrayUnique()
+	// @ValidateNested({ each: true })
 	availableActions!: Array<ResourceActionDTO>;
 
 }

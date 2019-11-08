@@ -1,45 +1,58 @@
 import { ResourceActionDTO } from './sub.resource-action.dto';
+import { Authorization }     from '../protos';
+import { Transform }         from 'class-transformer';
+import {
+	isAnyProtosTypeObject,
+	unpackAuthorizationMessage,
+} from '../protos/index';
 import {
 	IsString,
 	ArrayUnique,
 	ValidateNested,
 	IsMongoId,
 	ValidationArguments,
-	ValidateIf,
-	Validate,
-	ValidatorConstraintInterface,
+	registerDecorator,
+	validate,
+	IsDefined,
 } from 'class-validator';
+import { decodeResourcePolicyDocumentType } from '../models';
 
 
-export function IsOneDefinedFrom(fieldsToCheck: Array<string>, constraints: Array<Function>) {
-
-	return function(target: any, propertyKey: string) {
-		const decorators: Array<Function> = [
-			Validate(IsOneDefinedFromFieldsValidation, fieldsToCheck),
-			ValidateIf((o: any) => !!o[propertyKey]),
-			...constraints,
-		];
-		decorators.forEach((d: Function) => d(target, propertyKey));
-	}
+export type StandardEnum<T> = {
+	[id: string]: T | string;
+	[nu: number]: string;
 }
 
 
-export class IsOneDefinedFromFieldsValidation implements ValidatorConstraintInterface {
-
-	public validate(value: any, args: ValidationArguments) {
-		const { object: targetObject } = args;
-		const [ fieldsToCheck ] = args.constraints;
-		const allOthersAreUndefined = fieldsToCheck.every((fieldName: string) => !(targetObject as any)[fieldName]);
-		const oneOfOthersIsDefined  = fieldsToCheck.filter((fieldName: string) => !!(targetObject as any)[fieldName]).length === 1;
-		return (!!value && allOthersAreUndefined) || (!value && oneOfOthersIsDefined);
-	}
-
-	public defaultMessage(args: ValidationArguments) {
-		const { targetName }    = args;
-		const [ fieldsToCheck ] = args.constraints;
-		return `Only one of '${[targetName, ...fieldsToCheck].join(',')}' fields have to be defined`;
-	}
-
+export function ValueTypedValidate<T extends StandardEnum<number>>
+																	(typePropertyName: string,
+																	 typeValidators: {[K in keyof T]: Array<Function> }) {
+	return function(object: any, propertyName: string) {
+		registerDecorator({
+			name: 'ValueTypedValidate',
+			target: object.constructor.Function,
+			propertyName: propertyName,
+			constraints: [],
+			options: {},
+			async: true,
+			validator: {
+				async validate(value: any, args: ValidationArguments) {
+					const { object: validatedObject } = args;
+					const validators = typeValidators[(validatedObject as any)[typePropertyName]];
+					const validatedObjectCopy = { propertyName: value };
+					validators.forEach((validator: Function) => validator(validatedObjectCopy, propertyName));
+					const errors = await validate(validatedObjectCopy);
+					if (errors.length) {
+						args.constraints.push(errors[0].toString());
+					}
+					return errors.length === 0;
+				},
+				defaultMessage(args: ValidationArguments) {
+					return args.constraints.slice(-1)[0];
+				}
+			}
+		})
+	};
 }
 
 
@@ -48,15 +61,24 @@ export class ResourcePolicyDocumentDTO {
 	@IsMongoId()
 	indentityId!: string;
 
-	@IsOneDefinedFrom(['actions'], [
-		IsString(),
-	])
-	actionsGlyph?: string;
+	@Transform((value: any) => decodeResourcePolicyDocumentType(value))
+	@IsDefined()
+	policyDocumentType!: string;
 
-	@IsOneDefinedFrom(['actionsGlyph'], [
-		ArrayUnique(),
-		ValidateNested({ each: true }),
-	])
-	actions?: Array<ResourceActionDTO>;
+	@Transform((value: any) => {
+		return isAnyProtosTypeObject(value)
+			? unpackAuthorizationMessage(value)
+			: value;
+	})
+	@ValueTypedValidate<typeof Authorization.ResourcePolicyDocumentType>('policyDocumentType', {
+		'ACTIONS_LIST': [
+			ArrayUnique(),
+			ValidateNested({ each: true }),
+		],
+		'GLYPH_SYMBOL': [
+			IsString(),
+		],
+	})
+	value!: Array<ResourceActionDTO> | string;
 
 }

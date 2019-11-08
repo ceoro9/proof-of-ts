@@ -1,6 +1,5 @@
 import { IsMongoId }    from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { IResourceId }  from '@post-service/base';
 
 
 export class ExtractResourceByMongoIdDTO {
