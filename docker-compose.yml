@@ -2,12 +2,12 @@ version: '3'
 services:
   
   user_service:
-    build: ./userService
+    build: ./user-service
     container_name: user_service
     ports:
       - "8000:8000"
     env_file:
-      - ./userService/env-vars.env
+      - ./user-service/env-vars.env
     links:
       - user_mongo:database
       - user_rabbit:queue
@@ -15,12 +15,12 @@ services:
       - backend
 
   # post_service:
-  #   build: ./postService
+  #   build: ./post-service
   #   container_name: post_service
   #   ports:
   #     - "3000:3000"
   #   env_file:
-  #     - ./postService/env-vars.env
+  #     - ./post-service/env-vars.env
   #   links:
   #     - post_mongo_1:database
   #     - post_mongo_2:database
