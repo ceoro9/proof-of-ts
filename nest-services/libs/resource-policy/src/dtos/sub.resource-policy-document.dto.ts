@@ -1,84 +1,86 @@
-import { ResourceActionDTO } from './sub.resource-action.dto';
-import { Authorization }     from '../protos';
-import { Transform }         from 'class-transformer';
+import { ResourceActionDTO }                from './sub.resource-action.dto';
+import { Authorization }                    from '../protos';
+import { MongooseObjectId }                 from '@post-service/posts';
+import { Transform, Type, TypeHelpOptions, plainToClass }             from 'class-transformer';
+import { IsString, ArrayUnique, ValidateNested, Validate, IsDefined } from 'class-validator';
 import {
-	isAnyProtosTypeObject,
-	unpackAuthorizationMessage,
-} from '../protos/index';
-import {
-	IsString,
-	ArrayUnique,
-	ValidateNested,
-	IsMongoId,
-	ValidationArguments,
-	registerDecorator,
-	validate,
-	IsDefined,
-} from 'class-validator';
-import { decodeResourcePolicyDocumentType } from '../models';
+	decodeResourcePolicyDocumentType,
+	GlyphSymbolPolicyDocumentType,
+	ActionsListPolicyDocumentType,
+} from '../models';
 
 
-export type StandardEnum<T> = {
-	[id: string]: T | string;
-	[nu: number]: string;
+
+
+abstract class BaseResourcePolicyDocumentTypeDTO {
+
+	public abstract getKind(): any;
+
 }
 
 
-export function ValueTypedValidate<T extends StandardEnum<number>>
-																	(typePropertyName: string,
-																	 typeValidators: {[K in keyof T]: Array<Function> }) {
-	return function(object: any, propertyName: string) {
-		registerDecorator({
-			name: 'ValueTypedValidate',
-			target: object.constructor.Function,
-			propertyName: propertyName,
-			constraints: [],
-			options: {},
-			async: true,
-			validator: {
-				async validate(value: any, args: ValidationArguments) {
-					const { object: validatedObject } = args;
-					const validators = typeValidators[(validatedObject as any)[typePropertyName]];
-					const validatedObjectCopy = { propertyName: value };
-					validators.forEach((validator: Function) => validator(validatedObjectCopy, propertyName));
-					const errors = await validate(validatedObjectCopy);
-					if (errors.length) {
-						args.constraints.push(errors[0].toString());
-					}
-					return errors.length === 0;
-				},
-				defaultMessage(args: ValidationArguments) {
-					return args.constraints.slice(-1)[0];
-				}
-			}
-		})
-	};
+export class GlyphResourcePolicyDocumentTypeDTO extends BaseResourcePolicyDocumentTypeDTO {
+
+	@IsString()
+	symbol!: string;
+
+	public getKind() {
+		return plainToClass(GlyphSymbolPolicyDocumentType, this);
+	}
+
 }
+
+
+export class ActionsListResourcePolicyDocumentTypeDTO extends BaseResourcePolicyDocumentTypeDTO {
+
+	@ArrayUnique()
+	@ValidateNested({ each: true })
+	actions!: Array<ResourceActionDTO>;
+
+	public getKind() {
+		return plainToClass(ActionsListPolicyDocumentType, this);
+	}
+
+}
+
+
+const resourcePolicyDocumentTypeDTOMapper = {
+	'ACTIONS_LIST': GlyphResourcePolicyDocumentTypeDTO,
+	'GLYPH_SYMBOL': ActionsListResourcePolicyDocumentTypeDTO,
+} as const;
 
 
 export class ResourcePolicyDocumentDTO {
 
-	@IsMongoId()
-	indentityId!: string;
+	@Validate(MongooseObjectId)
+	identityId!: string;
 
-	@Transform((value: any) => decodeResourcePolicyDocumentType(value))
+	@Transform((value: string) => {
+		return decodeResourcePolicyDocumentType(value);
+	})
 	@IsDefined()
 	policyDocumentType!: string;
 
-	@Transform((value: any) => {
-		return isAnyProtosTypeObject(value)
-			? unpackAuthorizationMessage(value)
-			: value;
+	@Type((type?: TypeHelpOptions) => {
+		if (type) {
+			const { object } = type;
+			const policyDocumentType = decodeResourcePolicyDocumentType((object as any).policyDocumentType);
+			const resultType = policyDocumentType ? resourcePolicyDocumentTypeDTOMapper[policyDocumentType] : void 0;
+			if (!resultType) {
+				throw new Error('Cannot decode policy document type');
+			}
+			return resultType;
+		}
+		throw new Error('Cannot find type information');
 	})
-	@ValueTypedValidate<typeof Authorization.ResourcePolicyDocumentType>('policyDocumentType', {
-		'ACTIONS_LIST': [
-			ArrayUnique(),
-			ValidateNested({ each: true }),
-		],
-		'GLYPH_SYMBOL': [
-			IsString(),
-		],
+	@Transform((value: Authorization.AnyJson, obj: any) => {
+		if (value.jsonSerializedValue) {
+			const result = JSON.parse(value.jsonSerializedValue);
+			return plainToClass((value as any).constructor, result);
+		}
 	})
-	value!: Array<ResourceActionDTO> | string;
+	@IsDefined()
+	@ValidateNested({ each: true })
+	policyDocumentValue!: GlyphResourcePolicyDocumentTypeDTO | ActionsListResourcePolicyDocumentTypeDTO;
 
 }

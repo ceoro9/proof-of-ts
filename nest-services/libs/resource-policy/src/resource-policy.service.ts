@@ -2,12 +2,12 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { InjectModel }                                        from 'nestjs-typegoose';
 import { validate }                        									  from 'class-validator';
 import { ReturnModelType }                 										from '@typegoose/typegoose';
-import { IResourceId }                     										from '@post-service/base';
 import { ResourceType, ResourceInstance }  										from './models';
 import {
 	CreateResourceTypeDTO,
 	CreateResourceInstanceDTO,
 	ResourcePolicyDocumentDTO,
+	ExtractResourceByMongoIdDTO,
 } from './dtos';
 
 
@@ -20,21 +20,18 @@ export class ResourcePolicyService {
 	) {}
 
 	public async createResourceType(createResourceTypeDTO: CreateResourceTypeDTO) {
-		console.log('NICE');
-		// const errors = await validate(createResourceTypeDTO);
-		// console.log(errors);
-		// if (errors.length) {
-		// 	throw new BadRequestException('Invalid payload');
-		// }
-		console.log('ZAZAZA');
+		const errors = await validate(createResourceTypeDTO);
+		if (errors.length) {
+			throw new Error('Invalid payload');
+		}
 		return this.resourceTypeModel.create(createResourceTypeDTO);
 	}
 
 	public async createResourceInstance(createResourceInstanceDTO: CreateResourceInstanceDTO) {
+		console.log(createResourceInstanceDTO.policy.documents);
 		const errors = await validate(createResourceInstanceDTO);
-		console.log(errors);
 		if (errors.length) {
-			throw new BadRequestException('Invalid payload');
+			throw new Error('Invalid payload');
 		}
 		const { resourceId, ownerId, typeId, policy } = createResourceInstanceDTO;
 		return this.resourceInstanceModel.create({
@@ -43,21 +40,25 @@ export class ResourcePolicyService {
 			typeId,
 			policy: {
 				documents: policy.documents.map((rpDTO: ResourcePolicyDocumentDTO) => {
-					const { indentityId, policyDocumentType, value } = rpDTO;
+					const { identityId, policyDocumentType, policyDocumentValue } = rpDTO;
 					return {
-						indentityId,
+						identityId,
 						type: policyDocumentType,
-						kind: value,
+						kind: policyDocumentValue.getKind(),
 					};
 				})
 			}
 		});
 	}
 
-	public async getResourceInstanceById(resourceInstanceId: IResourceId) {
-		const resourceInstance = await this.resourceInstanceModel.findById(resourceInstanceId).exec();
+	public async getResourceInstanceById(resourceInstanceId: ExtractResourceByMongoIdDTO) {
+		const errors = await validate(resourceInstanceId);
+		if (errors.length) {
+			throw new Error('Invalid resource id format');
+		}
+		const resourceInstance = await this.resourceInstanceModel.findById(resourceInstanceId.value).exec();
 		if (!resourceInstance) {
-			throw new NotFoundException('Resource instance was not found');
+			throw new Error('Resource instance was not found');
 		}
 		return resourceInstance;
 	}

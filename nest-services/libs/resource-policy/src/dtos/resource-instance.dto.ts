@@ -1,18 +1,21 @@
-import { ValidateNested, IsMongoId } from 'class-validator';
-import { ResourcePolicyDTO }         from './sub.resource-policy.dto';
+import { ValidateNested, Validate } from 'class-validator';
+import { Type }                     from 'class-transformer';
+import { MongooseObjectId }         from '@post-service/posts';
+import { ResourcePolicyDTO }        from './sub.resource-policy.dto';
 
 
 export class CreateResourceInstanceDTO {
 
-	@IsMongoId()
+	@Validate(MongooseObjectId)
 	resourceId!: string;
 
-	@IsMongoId()
+	@Validate(MongooseObjectId)
 	typeId!: string;
 
-	@IsMongoId()
+	@Validate(MongooseObjectId)
 	ownerId!: string;
 
+	@Type(() => ResourcePolicyDTO)
 	@ValidateNested()
 	policy!: ResourcePolicyDTO;
 	

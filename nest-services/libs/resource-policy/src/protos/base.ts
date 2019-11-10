@@ -1,15 +1,14 @@
 
 import ProtoBuf from 'protobufjs';
-import { google } from './authorization-grpc-namespaces';
 
 
 export function packMessage(root: ProtoBuf.Root) {
 	const Any = root.lookupType('Any');
-	return (message: ProtoBuf.Message, prefix: string = 'Any') => {
+	return (message: ProtoBuf.Message, prefix: string) => {
 		return {
 			type_url: `Authorization.${prefix}`,
 			value:    Any.encode(message).finish(),
-		} as google.protobuf.Any;
+		};
 	};
 }
 

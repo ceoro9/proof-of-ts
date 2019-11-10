@@ -1,10 +1,11 @@
-import { IsMongoId }    from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { Validate }         from 'class-validator';
+import { plainToClass }     from 'class-transformer';
+import { MongooseObjectId } from '@post-service/posts';
 
 
 export class ExtractResourceByMongoIdDTO {
 
-	@IsMongoId()
+	@Validate(MongooseObjectId)
 	value!: string;
 
 }

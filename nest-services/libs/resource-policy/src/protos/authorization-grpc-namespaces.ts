@@ -81,7 +81,14 @@ export namespace Authorization {
         policyDocumentType?: (Authorization.ResourcePolicyDocumentType|null);
 
         /** ResourcePolicyDocument policyDocumentValue */
-        policyDocumentValue?: (google.protobuf.Any|null);
+        policyDocumentValue?: (Authorization.AnyJson|null);
+    }
+
+    /** Properties of an AnyJson. */
+    export interface AnyJson {
+
+        /** AnyJson jsonSerializedValue */
+        jsonSerializedValue?: (string|null);
     }
 
     /** Properties of an IsActionPermittedRequest. */
@@ -145,39 +152,5 @@ export namespace Authorization {
          * @returns Promise
          */
         isActionPermitted(request: Authorization.IsActionPermittedRequest, metadata?: grpc.Metadata): Observable<Authorization.IsActionPermittedResponse>;
-    }
-}
-
-/** Namespace google. */
-export namespace google {
-
-    /** Contains all the RPC service clients. */
-    export interface ClientFactory {
-    }
-
-    /** Builder for an RPC service server. */
-    export interface ServerBuilder {
-    }
-
-    /** Namespace protobuf. */
-    export namespace protobuf {
-
-        /** Contains all the RPC service clients. */
-        export interface ClientFactory {
-        }
-
-        /** Builder for an RPC service server. */
-        export interface ServerBuilder {
-        }
-
-        /** Properties of an Any. */
-        export interface Any {
-
-            /** Any type_url */
-            type_url?: (string|null);
-
-            /** Any value */
-            value?: (Uint8Array|null);
-        }
     }
 }

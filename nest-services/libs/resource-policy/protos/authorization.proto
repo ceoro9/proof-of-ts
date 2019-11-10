@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package Authorization;
 
-import "google/protobuf/any.proto";
-
 /*
  * ===================================================
  * 
@@ -49,8 +47,21 @@ message ResourcePolicyDocument {
     ResourcePolicyDocumentType policyDocumentType = 2;
 
     // type of document value is controlled by policy document type
-    google.protobuf.Any policyDocumentValue = 3;
+    AnyJson policyDocumentValue = 3;
 }
+
+message AnyJson {
+    string jsonSerializedValue = 1;
+}
+
+
+// TODO: Create Any policyDocumentValue type
+// message ActionsListPolicyDocumentValue {
+//     repeated string actions = 1;
+// }
+// message GlyphSymbolPolicyDocumentValue {
+//     string symbol = 1;
+// }
 
 /*
  * ===================================================

@@ -12,7 +12,7 @@ export type ResourcePolicyDocumentKindType = GlyphSymbolPolicyDocumentType | Act
 const ResourcePolicyDocumentTypeMapper = {
 	[Authorization.ResourcePolicyDocumentType.ACTIONS_LIST]: 'ACTIONS_LIST',
 	[Authorization.ResourcePolicyDocumentType.GLYPH_SYMBOL]: 'GLYPH_SYMBOL',
-}
+} as const;
 
 
 export function encodeResourcePolicyDocumentType(valueToEncode: string) {
@@ -30,23 +30,21 @@ export function encodeResourcePolicyDocumentType(valueToEncode: string) {
 
 
 export function decodeResourcePolicyDocumentType(keyToDecode: string | number) {
-	return (ResourcePolicyDocumentTypeMapper as any)[keyToDecode];
+	return (ResourcePolicyDocumentTypeMapper as any)[keyToDecode] as undefined | {
+		[K in keyof typeof ResourcePolicyDocumentTypeMapper]: typeof ResourcePolicyDocumentTypeMapper[K]
+	}[keyof typeof ResourcePolicyDocumentTypeMapper];
 }
 
 
 export class ResourcePolicyDocument {
 
-	@prop({
-		required: true,
-		enum: ResourcePolicyDocumentTypeMapper,
-		_id: false,
-	})
+	@prop({ required: true })
 	type!: string; 
 	
 	@prop({ required: true })
-	indentityId!: string;
+	identityId!: string;
 
-	@prop({ required: true, refPath: 'type', _id: false })
+	@prop({ required: true, _id: false })
 	kind!: ResourcePolicyDocumentKindType;
 
 }
