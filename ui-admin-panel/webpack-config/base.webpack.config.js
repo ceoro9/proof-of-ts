@@ -62,7 +62,9 @@ module.exports = {
   },
 
   performance: {
-		hints: "warning"
+    hints: "warning",
+    maxEntrypointSize: 2000000, // 2MB
+    maxAssetSize: 5000000, // 5MB
   },
 
   plugins: [
