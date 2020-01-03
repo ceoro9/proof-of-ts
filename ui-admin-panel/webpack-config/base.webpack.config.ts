@@ -1,17 +1,20 @@
-const path                       = require('path');
-const HtmlWebpackPlugin          = require('html-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+import path                       from 'path';
+import webpack                    from 'webpack';
+import HtmlWebpackPlugin          from 'html-webpack-plugin';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import {
+  SRC_FOLDER_PATH,
+  DIST_FOLDER_PATH,
+  ROOT_PROJECT_PATH,
+  NODE_MODULES_PATH,
+} from '.';
 
-const projectRootPath            = path.resolve(__dirname, '../');
-const nodeModulesFolderPath      = path.resolve(projectRootPath, 'node_modules/');
-const srcFolderPath              = path.resolve(projectRootPath, 'src/');
-const distFolderPath             = path.resolve(projectRootPath, 'dist/');
 
-module.exports = {
-  entry: srcFolderPath,
+const config: webpack.Configuration = {
+  entry: SRC_FOLDER_PATH,
   
 	output: {
-    path: distFolderPath,
+    path: DIST_FOLDER_PATH,
 		publicPath: "/"
   },
   
@@ -20,10 +23,10 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				include: [
-		    	srcFolderPath
+		    	SRC_FOLDER_PATH
         ],
         exclude: [
-          nodeModulesFolderPath
+          NODE_MODULES_PATH
         ],
         use: [
           {
@@ -41,7 +44,7 @@ module.exports = {
           {
             loader: 'ts-loader',
             options: {
-              configFile: path.resolve(projectRootPath, 'tsconfig.json'),
+              configFile: path.resolve(ROOT_PROJECT_PATH, 'tsconfig.json'),
               // disable type-checking(it handles on separate process by fork plugin)
               transpileOnly: true,
               // parallise building process
@@ -55,8 +58,8 @@ module.exports = {
 
   resolve: {
 		modules: [
-	    nodeModulesFolderPath,
-	    srcFolderPath
+	    NODE_MODULES_PATH,
+	    SRC_FOLDER_PATH
 		],
 		extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
   },
@@ -70,7 +73,7 @@ module.exports = {
   plugins: [
     // Generates html page with a resulting bundle
     new HtmlWebpackPlugin({
-      template: path.resolve(srcFolderPath, "index.html")
+      template: path.resolve(SRC_FOLDER_PATH, "index.html")
     }),
     // Runs Typescript type-checker on a separate process 
     new ForkTsCheckerWebpackPlugin({
@@ -80,3 +83,4 @@ module.exports = {
   ]
 };
 
+export default config;
