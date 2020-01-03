@@ -1,6 +1,6 @@
 import React    from 'react';
 import ReactDOM from 'react-dom';
-import App      from './components/App';
+import { App }  from './App';
 
 ReactDOM.render(<App/>, document.getElementById('root'));
 
@@ -8,8 +8,8 @@ ReactDOM.render(<App/>, document.getElementById('root'));
 declare const module: { hot: any };
 
 if (module.hot) {
-  module.hot.accept('./components/App', () => {
-    const NewApp = require('./components/App').default;
+  module.hot.accept('./App', () => {
+    const { App: NewApp } = require('./App');
     ReactDOM.render(<NewApp/>, document.getElementById('root'));
   });
 }
