@@ -57,3 +57,7 @@ src/**/*.map
 .idea/
 *.swp
 *.iml
+
+# Generated typings for css modules
+*.css.d.ts
+*.scss.d.ts
