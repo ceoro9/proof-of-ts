@@ -13,11 +13,14 @@ const config: webpack.Configuration = {
 		compress: true,
 		hot: true,
 		noInfo: false,
-		quiet: false,
+    quiet: false,
+    historyApiFallback: true,
+    publicPath: '/'
 	},
 	output: {
-		...baseConfig.output,
-		filename: 'dev.bundle.js',
+    ...baseConfig.output,
+    publicPath: '/',
+    filename: 'dev.bundle.js',
 	},
 	plugins: [
 		...baseConfig.plugins,
