@@ -8,6 +8,7 @@ const config: webpack.Configuration = {
 	mode: 'development',
 	devtool: 'inline-source-map',
 	devServer: {
+    host: '0.0.0.0',
 		contentBase: path.join(SRC_FOLDER_PATH, 'dist'),
 		port: parseInt(process.env.UI_ADMIN_PANEL_DEV_SERVER_PORT) || 9000,
 		compress: true,
