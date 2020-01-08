@@ -13,12 +13,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "typeRoots": [
-      "node_modules/@types",
-      "./src/index.d.ts"
+      "node_modules/@types/",
+      "./src/@types/"
     ]
   },
   "include": [
     "**/*"
   ],
-  "exclude": []
+  "exclude": [],
+  "paths": {
+    "*" : ["./src/@types/*"]
+  }
 }
