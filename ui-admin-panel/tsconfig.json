@@ -1,7 +1,5 @@
 {
-  "include": [
-    "**/src/**/*.{ts,tsx,d.ts}"
-  ],
+  "compileOnSave": true,
   "compilerOptions": {
     "target": "ES2016",
     "sourceMap": true,
@@ -19,8 +17,8 @@
       "./src/index.d.ts"
     ]
   },
-
-  "exclude": [
-    "node_modules"
-  ]
+  "include": [
+    "**/*"
+  ],
+  "exclude": []
 }
