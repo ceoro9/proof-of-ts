@@ -37,7 +37,7 @@ export class SourceAccountModelMixin {
  * Adds support of username/password credentials to model
  * @param baseAccountCtor
  */
-export function applyMixin<BC extends Constructable>(baseAccountCtor: BC) {
+export function UsernamePasswordCredentialsModelSupport<BC extends Constructable>(baseAccountCtor: BC) {
 
 	class ResultMixedClass extends baseAccountCtor implements UsernamePasswordCrendentialsModelType {
 
