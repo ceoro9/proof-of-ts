@@ -92,7 +92,8 @@
       "@post-service/users/(.*)": "<rootDir>/libs/users/src/$1",
       "@post-service/post-tags/(.*)": "<rootDir>/libs/post-tags/src/$1",
       "@post-service/posts/(.*)": "<rootDir>/libs/posts/src/$1",
-      "@authorization-service/resource-policy/(.*)": "<rootDir>/libs/resource-policy/src/$1"
+      "@authorization-service/resource-policy/(.*)": "<rootDir>/libs/resource-policy/src/$1",
+      "@app/accounts/(.*)": "<rootDir>/libs/accounts/src/$1"
     }
   }
 }

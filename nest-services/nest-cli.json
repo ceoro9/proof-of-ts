@@ -106,6 +106,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/resource-policy/tsconfig.lib.json"
       }
+    },
+    "accounts": {
+      "type": "library",
+      "root": "libs/accounts",
+      "entryFile": "index",
+      "sourceRoot": "libs/accounts/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/accounts/tsconfig.lib.json"
+      }
     }
   }
 }

@@ -66,6 +66,12 @@
       ],
       "@authorization-service/resource-policy/*": [
         "libs/resource-policy/src/*"
+      ],
+      "@app/accounts": [
+        "libs/accounts/src"
+      ],
+      "@app/accounts/*": [
+        "libs/accounts/src/*"
       ]
     }
   },
