@@ -1,0 +1,27 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "ES2016",
+    "sourceMap": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "typeRoots": [
+      "node_modules/@types/",
+      "./src/@types/"
+    ]
+  },
+  "include": [
+    "**/*"
+  ],
+  "exclude": [],
+  "paths": {
+    "*" : ["./src/@types/*"]
+  }
+}
