@@ -40,6 +40,8 @@ export function isAsset(obj: any): obj is Asset {
  */
 export class _LocalAccount extends BaseAccount {
 
+	// TODO: ADD STATUS
+
 	@prop({ required: true, enum: EntitledEntityType })
   entitledEntityType!: string;
 

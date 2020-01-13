@@ -1,18 +1,18 @@
 version: '3'
 services:
   
-  user_service:
-    build: ./user-service
-    container_name: user_service
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./user-service/env-vars.env
-    links:
-      - user_mongo:database
-      - user_rabbit:queue
-    networks: 
-      - backend
+  # user_service:
+  #   build: ./user-service
+  #   container_name: user_service
+  #   ports:
+  #     - "8000:8000"
+  #   env_file:
+  #     - ./user-service/env-vars.env
+  #   links:
+  #     - user_mongo:database
+  #     - user_rabbit:queue
+  #   networks: 
+  #     - backend
 
   # post_service:
   #   build: ./post-service

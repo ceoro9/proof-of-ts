@@ -1,10 +1,10 @@
-import { Injectable }                       from '@nestjs/common';
+import { Injectable, BadRequestException }  from '@nestjs/common';
 import { InjectModel }                      from 'nestjs-typegoose';
 import { ReturnModelType }                  from '@typegoose/typegoose';
 import { validate, ValidationError }        from 'class-validator';
 import { plainToClass }                     from 'class-transformer';
 import { LocalAccount, EntitledEntityType } from './models';
-import { LocalAccountCreateDTO }            from './dtos/';
+import { CreateLocalAccountDTO }            from './dtos/';
 
 @Injectable()
 export class LocalAccountsService {
@@ -13,21 +13,21 @@ export class LocalAccountsService {
 		@InjectModel(LocalAccount) private readonly localAccountModel: ReturnModelType<typeof LocalAccount>
 	) {}
 
-	public async create(data: object | LocalAccountCreateDTO) {
+	public async createAccount(data: object | CreateLocalAccountDTO) {
 
-		let localAccountDto;
+		let createLocalAccountDto;
 
-		if (!(data instanceof LocalAccountCreateDTO)) {
-			localAccountDto = plainToClass(LocalAccountCreateDTO, data);
+		if (!(data instanceof CreateLocalAccountDTO)) {
+			createLocalAccountDto = plainToClass(CreateLocalAccountDTO, data);
 		} else {
-			localAccountDto = data;
+			createLocalAccountDto = data;
 		}
 
-		const errors = await validate(localAccountDto);
+		const errors = await validate(createLocalAccountDto);
 		
 		if (errors.length) {
 			// TODO: handle errors
-			throw new Error(
+			throw new BadRequestException(
 				`Error occured: ${
 					errors
 						.map((err: ValidationError) => err.toString())
@@ -36,14 +36,14 @@ export class LocalAccountsService {
 			);
 		}
 
-		return this.localAccountModel.create(localAccountDto);
+		return this.localAccountModel.create(createLocalAccountDto); // TODO: wrap
 	}
 
-	public async findById(id: string) {
+	public async findAccountById(id: string) {
 		return this.localAccountModel.findById(id).exec();
 	}
 
-	public async findByResourceId(id: string, name: string) {
+	public async findAccountByResourceId(id: string, name: string) {
 		// TODO: separate repo for this functionality
 		return this.localAccountModel.find({
 			'entitledEntityType': EntitledEntityType.Resource,
@@ -52,18 +52,18 @@ export class LocalAccountsService {
 		}).exec();
 	}
 
-	public async findByAssetId(id: string) {
+	public async findAccountByAssetId(id: string) {
 		return this.localAccountModel.find({
 			'entitledEntityType': EntitledEntityType.Asset,
 			'entitledEntity.assetId': id
 		}).exec();
 	}
 
-	public async block() {
+	public async blockAccountById() {
 		// TODO
 	}
 
-	public async delete() {
+	public async deleteAccountById() {
 		// TODO
 	}
 }

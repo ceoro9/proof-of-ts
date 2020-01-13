@@ -98,6 +98,15 @@
         "tsConfigPath": "apps/authorization-service/tsconfig.app.json"
       }
     },
+    "accounts-service": {
+      "type": "application",
+      "root": "apps/accounts-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/accounts-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/accounts-service/tsconfig.app.json"
+      }
+    },
     "resource-policy": {
       "type": "library",
       "root": "libs/resource-policy",

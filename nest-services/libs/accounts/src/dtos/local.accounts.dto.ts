@@ -1,8 +1,8 @@
-import { IsString, IsDate, IsOptional, IsEnum } from 'class-validator';
-import { Type, TypeHelpOptions }                from 'class-transformer';
-import { EntitledEntityType, Resource, Asset }  from '../models';
+import { IsString, IsOptional, IsEnum, IsDateString } from 'class-validator';
+import { Type, TypeHelpOptions }                      from 'class-transformer';
+import { EntitledEntityType, Resource, Asset }        from '../models';
 
-export class LocalAccountCreateDTO {
+export class CreateLocalAccountDTO {
 
 	@IsString()
 	username!: string;
@@ -15,13 +15,15 @@ export class LocalAccountCreateDTO {
 	@IsString()
 	lastName?: string;
 
-	@IsDate()
+	@IsDateString()
 	expiresAt!: Date;
 
 	@IsEnum(EntitledEntityType)
 	entitledEntityType!: string;
 
+	// TODO: Transform
 	@Type((type?: TypeHelpOptions) => {
+		console.log("ppppppppppppppppppppp", type);
 		const { newObject } = type!;
 
 		switch (newObject.entitledEntityType) {
@@ -39,5 +41,4 @@ export class LocalAccountCreateDTO {
 		}
 	})
 	entitledEntity!: Resource | Asset;
-	
 }

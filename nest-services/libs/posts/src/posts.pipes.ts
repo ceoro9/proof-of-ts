@@ -48,7 +48,7 @@ export class MongooseObjectIdParamValidationPipe implements PipeTransform<string
  */
 export class DTOBodyValidadtionPipe implements PipeTransform {
 	
-	public async transform(value: any, { metatype, type }: ArgumentMetadata) {);
+	public async transform(value: any, { metatype, type }: ArgumentMetadata) {
 
 		if (type === 'body' && metatype && isSubClass(metatype)(BaseDTO)) {
 			
