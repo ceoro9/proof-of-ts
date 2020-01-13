@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
+import { validate }     from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import { BaseDTO }      from '@post-service/base/base.dto';
 import {
 	PipeTransform,
 	ArgumentMetadata,
 	Injectable,
 	BadRequestException,
 } from '@nestjs/common';
-import { validate }          from 'class-validator';
-import { plainToClass }      from 'class-transformer';
-import { BaseModelDTO }      from '@post-service/base/base.dto';
 
 /**
  * Checks if B is sub-class of A
@@ -48,17 +48,14 @@ export class MongooseObjectIdParamValidationPipe implements PipeTransform<string
  */
 export class DTOBodyValidadtionPipe implements PipeTransform {
 	
-	public async transform(value: any, { metatype, type }: ArgumentMetadata) {
+	public async transform(value: any, { metatype, type }: ArgumentMetadata) {);
 
-		console.log(metatype, 'ssssss');
-
-		if (type === 'body' && metatype && isSubClass(metatype)(BaseModelDTO)) {
+		if (type === 'body' && metatype && isSubClass(metatype)(BaseDTO)) {
 			
 			const object = plainToClass(metatype, value);
+			console.log(value, 'AZAZAZ');
 			const errors = await validate(object);
 
-			console.log(errors);
-		
 			// TODO: prettiy error-response
 			if (errors.length) {
 				throw new BadRequestException('Validation faied');
