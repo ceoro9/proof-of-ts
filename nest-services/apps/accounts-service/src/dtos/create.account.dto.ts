@@ -1,12 +1,22 @@
-import { IsEnum, IsObject } from 'class-validator';
-import { AccountTypes }     from '@app/accounts';
-import { BaseDTO }          from '@post-service/base';
+import { ValidateNested, IsNotEmpty }          from 'class-validator';
+import { Type }                                from 'class-transformer';
+import { BaseDTO }                             from '@post-service/base';
+import { AccountTypes, CreateLocalAccountDTO } from '@app/accounts';
 
 export class CreateAccountDTO extends BaseDTO {
 
-	@IsEnum(AccountTypes)
-	type!: AccountTypes;
-
-	@IsObject()
-	data!: object;
+	@ValidateNested()
+	@IsNotEmpty()
+	@Type(() => BaseDTO, {
+		discriminator: {
+			property: '__type',
+			subTypes: [
+				{
+					value: CreateLocalAccountDTO,
+					name:  'local'
+				}
+			]
+		}
+	})
+	data!: CreateLocalAccountDTO;
 }

@@ -23,6 +23,8 @@ export class AppController {
 	@Post()
 	@UsePipes(new DTOBodyValidadtionPipe())
   public async createAccount(@Body() createAccountDTO: CreateAccountDTO) {
-		return this.appService.createAccount(createAccountDTO);
+		const result = await this.appService.createAccount(createAccountDTO);
+		console.log('111111111111111');
+		return result;
 	}
 }

@@ -1,20 +1,25 @@
-import { prop }        from '@typegoose/typegoose';
+import { prop, DocumentType }        from '@typegoose/typegoose';
 import { BaseAccount } from './base.account.model';
 import {
 	UsernamePasswordCredentialsModelSupport
 } from '../accounts.model-support';
+import { IsString } from 'class-validator';
 
 export enum EntitledEntityType {
 	Resource = 'resource',
 	Asset    = 'asset'
 }
 
-export class Resource {
+export class BaseProperty {}
+
+export class Resource extends BaseProperty {
 
 	@prop({ required: true })
+	@IsString()
 	resourceName!: string;
 
 	@prop({ required: true })
+	@IsString()
 	resourceId!: string;
 }
 
@@ -22,9 +27,10 @@ export function isResource(obj: any): obj is Resource {
 	return obj instanceof Resource;
 }
 
-export class Asset {
+export class Asset extends BaseProperty {
 
 	@prop({ required: true })
+	@IsString()
 	assetId!: string;
 
 	// TODO
@@ -51,4 +57,6 @@ export class _LocalAccount extends BaseAccount {
 
 export const LocalAccount = UsernamePasswordCredentialsModelSupport(_LocalAccount);
 
-export type LocalAccountType = ReturnType<typeof UsernamePasswordCredentialsModelSupport> & _LocalAccount;
+// export type LocalAccount = typeof LocalAccount;
+
+export type LocalAccountType = DocumentType<ReturnType<typeof UsernamePasswordCredentialsModelSupport> & _LocalAccount>;

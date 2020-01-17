@@ -1,11 +1,32 @@
-import { IsString, IsOptional, IsEnum, IsDateString } from 'class-validator';
-import { Type, TypeHelpOptions }                      from 'class-transformer';
-import { EntitledEntityType, Resource, Asset }        from '../models';
+import { IsString, IsOptional, IsDateString, ValidateNested, IsDefined }        from 'class-validator';
+import { Type }                                              from 'class-transformer';
+import { BaseDTO }                                           from '@post-service/base';
+import { EntitledEntityType, Resource, Asset, BaseProperty } from '../models';
+import { UsernamePasswordCredentialsDtoSupport }             from '../accounts.model-support';
 
-export class CreateLocalAccountDTO {
+export class EntitledEntityDTO extends BaseDTO {
 
-	@IsString()
-	username!: string;
+	@ValidateNested()
+	@IsDefined()
+	@Type(() => BaseProperty, {
+		discriminator:  {
+			property: '__type',
+			subTypes: [
+				{
+					name:  EntitledEntityType.Asset,
+					value: Asset
+				},
+				{
+					name:  EntitledEntityType.Resource,
+					value: Resource
+				}
+			]
+		}
+	})
+	data!: Resource | Asset;
+}
+
+export class _CreateLocalAccountDTO extends BaseDTO {
 
 	@IsOptional()
 	@IsString()
@@ -18,27 +39,18 @@ export class CreateLocalAccountDTO {
 	@IsDateString()
 	expiresAt!: Date;
 
-	@IsEnum(EntitledEntityType)
-	entitledEntityType!: string;
-
-	// TODO: Transform
-	@Type((type?: TypeHelpOptions) => {
-		console.log("ppppppppppppppppppppp", type);
-		const { newObject } = type!;
-
-		switch (newObject.entitledEntityType) {
-
-			case EntitledEntityType.Resource:
-				return Resource;
-
-			case EntitledEntityType.Asset:
-				return Asset;
-			
-			default:
-				throw new Error(
-					`Unable to resolve entitled entity type: ${newObject.entitledEntityType}`
-				);
-		}
-	})
-	entitledEntity!: Resource | Asset;
+	@ValidateNested()
+	@IsDefined()
+	@Type(() => EntitledEntityDTO)
+	entitledEntity!: EntitledEntityDTO; 
 }
+
+export const CreateLocalAccountDTO = UsernamePasswordCredentialsDtoSupport(_CreateLocalAccountDTO);
+
+interface Callable<R> {
+  (...args: any[]): R;
+}
+
+type GenericReturnType<R, X> = X extends Callable<R> ? R : never;
+
+export type CreateLocalAccountDTO = _CreateLocalAccountDTO & GenericReturnType<_CreateLocalAccountDTO, typeof UsernamePasswordCredentialsDtoSupport>;

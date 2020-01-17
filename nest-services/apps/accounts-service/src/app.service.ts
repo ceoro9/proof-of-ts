@@ -1,37 +1,13 @@
-import { Injectable }           from '@nestjs/common';
-import { LocalAccountsService } from '@app/accounts/accounts.service';
-import { CreateAccountDTO }     from './dtos/create.account.dto';
-import { validate } from 'class-validator';
-import { AccountTypes } from '@app/accounts';
+import { Injectable }       from '@nestjs/common';
+import { AccountsService }  from '@app/accounts';
+import { CreateAccountDTO } from './dtos/create.account.dto';
 
 @Injectable()
 export class AppService {
-
-	public constructor(private localAccountService: LocalAccountsService) {}
+	
+	public constructor(private accountsService: AccountsService) {}
 
 	public async createAccount(createAccountDTO: CreateAccountDTO) {
-
-		// const errors = await createAccountDTO.validate();
-
-		// if (errors.length) {
-		// 	// TODO
-		// 	throw new Error(
-		// 		`Error happened: ${errors.map(err => err.toString()).join(', ')}`
-		// 	);
-		// }
-
-		switch (createAccountDTO.type) {
-
-			case AccountTypes.Local: {
-				// TODO
-				console.log(createAccountDTO.data, 'GOT')
-				const result = await this.localAccountService.createAccount(createAccountDTO.data);
-				return result;
-			}
-
-			default: {
-				return null; // TODO
-			}
-		}
+		return this.accountsService.createAccount(createAccountDTO.data);
 	}
 }

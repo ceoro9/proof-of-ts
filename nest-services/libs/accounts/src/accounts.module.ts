@@ -1,7 +1,10 @@
-import { Module }               from '@nestjs/common';
-import { TypegooseModule }      from 'nestjs-typegoose';
-import { LocalAccountsService } from './accounts.service';
-import { LocalAccount }         from './models';
+import { Module }          from '@nestjs/common';
+import { TypegooseModule } from 'nestjs-typegoose';
+import { LocalAccount }    from './models';
+import {
+	AccountsService,
+	LocalAccountsService,
+} from './services';
 
 @Module({
 	imports: [
@@ -9,7 +12,12 @@ import { LocalAccount }         from './models';
 			LocalAccount
 		])
 	],
-  providers: [LocalAccountsService],
-  exports:   [LocalAccountsService],
+  providers: [
+		AccountsService,
+		LocalAccountsService,
+	],
+  exports: [
+		AccountsService
+	]
 })
 export class AccountsModule {}

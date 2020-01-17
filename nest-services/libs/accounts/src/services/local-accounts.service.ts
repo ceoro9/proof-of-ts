@@ -3,8 +3,8 @@ import { InjectModel }                      from 'nestjs-typegoose';
 import { ReturnModelType }                  from '@typegoose/typegoose';
 import { validate, ValidationError }        from 'class-validator';
 import { plainToClass }                     from 'class-transformer';
-import { LocalAccount, EntitledEntityType } from './models';
-import { CreateLocalAccountDTO }            from './dtos/';
+import { LocalAccount, EntitledEntityType } from '../models';
+import { CreateLocalAccountDTO }            from '../dtos';
 
 @Injectable()
 export class LocalAccountsService {
@@ -13,18 +13,10 @@ export class LocalAccountsService {
 		@InjectModel(LocalAccount) private readonly localAccountModel: ReturnModelType<typeof LocalAccount>
 	) {}
 
-	public async createAccount(data: object | CreateLocalAccountDTO) {
-
-		let createLocalAccountDto;
-
-		if (!(data instanceof CreateLocalAccountDTO)) {
-			createLocalAccountDto = plainToClass(CreateLocalAccountDTO, data);
-		} else {
-			createLocalAccountDto = data;
-		}
+	public async createAccount(createLocalAccountDto: typeof CreateLocalAccountDTO) {
 
 		const errors = await validate(createLocalAccountDto);
-		
+
 		if (errors.length) {
 			// TODO: handle errors
 			throw new BadRequestException(

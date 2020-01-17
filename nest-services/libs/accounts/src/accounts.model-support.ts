@@ -1,22 +1,26 @@
 import { prop } from '@typegoose/typegoose';
+import { IsString, ValidateNested, IsDefined } from 'class-validator';
+import { Type } from 'class-transformer';
 
 /**
  * Constructor type
  */
 type Constructable<T = {}> = new(...args: any[]) => T;
 
+
 /**
- * Interface to work with model, that supports
- * username/password credentials type
+ * Readonly interface to access username/password credentials type
  */
-export interface UsernamePasswordCrendentialsModelType {
-
-	// Username methods
+export interface ReadonlyUsernamePasswordCredentials {
 	getUsername(): string;
-	setUsername(usernameValue: string): void;
-
-	// Password methods
 	getPassword(): string;
+}
+
+/**
+ * RW interface to work with username/password credentials type
+ */
+export interface UsernamePasswordCrendentialsModelType extends ReadonlyUsernamePasswordCredentials {  // TODO: rename interface
+	setUsername(usernameValue: string): void;
 	setPassword(passwordValue: string): void;
 }
 
@@ -31,6 +35,42 @@ export class SourceAccountModelMixin {
 
 	@prop({ required: true })
 	public passoword!: string;
+}
+
+export class UsernamePasswordCredentialsDTO {
+
+	// TODO: add custom validators
+	@IsString()	
+	username!: string;
+
+	// TODO: add custom validators
+	@IsString()
+	password!: string;
+}
+
+/**
+ * Adds support of username/password credentials to model
+ * @param baseAccountCtor 
+ */
+export function UsernamePasswordCredentialsDtoSupport<BC extends Constructable>(baseAccountCtor: BC) {
+
+	class ResultMixedClass extends baseAccountCtor implements ReadonlyUsernamePasswordCredentials {
+
+		@ValidateNested()
+		@IsDefined()
+		@Type(() => UsernamePasswordCredentialsDTO)
+		public __usernamePasswordData!: UsernamePasswordCredentialsDTO;
+
+		public getUsername() {
+			return this.__usernamePasswordData.username;
+		}
+
+		public getPassword() {
+			return this.__usernamePasswordData.password;
+		}
+	}
+
+	return ResultMixedClass;
 }
 
 /**
