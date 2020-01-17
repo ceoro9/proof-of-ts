@@ -2,7 +2,6 @@ import { Injectable, BadRequestException }  from '@nestjs/common';
 import { InjectModel }                      from 'nestjs-typegoose';
 import { ReturnModelType }                  from '@typegoose/typegoose';
 import { validate, ValidationError }        from 'class-validator';
-import { plainToClass }                     from 'class-transformer';
 import { LocalAccount, EntitledEntityType } from '../models';
 import { CreateLocalAccountDTO }            from '../dtos';
 

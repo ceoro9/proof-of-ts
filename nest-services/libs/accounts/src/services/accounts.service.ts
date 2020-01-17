@@ -1,5 +1,4 @@
 import { Injectable }                    from '@nestjs/common';
-import { BaseDTO }                       from '@post-service/base';
 import { ReturnModelType, DocumentType } from '@typegoose/typegoose';
 import { AnyParamConstructor }           from '@typegoose/typegoose/lib/types';
 import { LocalAccount }                  from '../models';

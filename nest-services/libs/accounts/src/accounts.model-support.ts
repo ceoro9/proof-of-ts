@@ -1,6 +1,6 @@
-import { prop } from '@typegoose/typegoose';
+import { prop }                                from '@typegoose/typegoose';
+import { Type }                                from 'class-transformer';
 import { IsString, ValidateNested, IsDefined } from 'class-validator';
-import { Type } from 'class-transformer';
 
 /**
  * Constructor type
@@ -28,7 +28,7 @@ export interface UsernamePasswordCrendentialsModelType extends ReadonlyUsernameP
  * Data stored in database to support
  * username/password credentials type
  */
-export class SourceAccountModelMixin {
+export class SourceAccountModelMixin { // TODO: move to separate module
 
 	@prop({ required: true, unique: true })
 	public username!: string;

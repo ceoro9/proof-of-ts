@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { prop }  from '@typegoose/typegoose';
+import { prop }   from '@typegoose/typegoose';
 
 export abstract class BaseAccount {
 	

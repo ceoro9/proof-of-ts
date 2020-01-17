@@ -1,8 +1,15 @@
-import { IsString, IsOptional, IsDateString, ValidateNested, IsDefined }        from 'class-validator';
 import { Type }                                              from 'class-transformer';
 import { BaseDTO }                                           from '@post-service/base';
 import { EntitledEntityType, Resource, Asset, BaseProperty } from '../models';
 import { UsernamePasswordCredentialsDtoSupport }             from '../accounts.model-support';
+import {
+	IsString,
+	IsOptional,
+	IsDateString,
+	ValidateNested,
+	IsDefined,
+} from 'class-validator';
+
 
 export class EntitledEntityDTO extends BaseDTO {
 
