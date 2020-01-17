@@ -37,6 +37,7 @@ export class _CreateLocalAccountDTO extends BaseDTO {
 	lastName?: string;
 
 	@IsDateString()
+	@Type(() => Date)
 	expiresAt!: Date;
 
 	@ValidateNested()
