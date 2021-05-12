@@ -30,7 +30,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.2",
     "dotenv": "^8.2.0",
-    "grpc": "^1.24.2",
+    "grpc": "^1.24.9",
     "mongoose": "^5.7.5",
     "nestjs-typegoose": "^7.0.0",
     "node-fetch": "^2.6.0",
