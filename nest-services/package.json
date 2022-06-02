@@ -34,7 +34,7 @@
     "mongoose": "^5.7.5",
     "nestjs-typegoose": "^7.0.0",
     "node-fetch": "^2.6.0",
-    "protobufjs": "^6.8.8",
+    "protobufjs": "^6.11.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.4",
